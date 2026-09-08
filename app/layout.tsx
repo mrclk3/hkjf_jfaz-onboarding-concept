@@ -46,6 +46,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="de" className="scroll-smooth">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/icon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+      </head>
       <body className="min-h-screen flex flex-col bg-hkjf-cream text-hkjf-text antialiased selection:bg-hkjf-red selection:text-white">
         <Navbar />
         <main className="flex-grow">{children}</main>
