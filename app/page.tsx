@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Hero } from "@/components/sections/Hero";
 import { ArrivalGuide } from "@/components/sections/ArrivalGuide";
+import { CampusMapInteractive } from "@/components/sections/CampusMapInteractive";
 import { CampusExplorer } from "@/components/sections/CampusExplorer";
 import { CappelGuide } from "@/components/sections/CappelGuide";
 import { ScheduleOverview } from "@/components/sections/ScheduleOverview";
@@ -21,10 +22,13 @@ export default function HomePage() {
       {/* 2. Step-by-Step Arrival & Check-in */}
       <ArrivalGuide />
 
-      {/* 3. Campus & Building Explorer with Tabs */}
+      {/* 3. Interactive Campus Map & Building Finder */}
+      <CampusMapInteractive />
+
+      {/* 4. Campus & Building Explorer with Tabs */}
       <CampusExplorer />
 
-      {/* 4. Cappel Surroundings Guide (Aldi, Lidl, tegut, dm, Apotheke, Pizzeria) */}
+      {/* 5. Cappel Surroundings Guide (Aldi, Lidl, tegut, dm, Apotheke, Pizzeria) */}
       <CappelGuide />
 
       {/* 5. Typical Lehrgang Schedule & Meals */}
