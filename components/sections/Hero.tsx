@@ -125,7 +125,7 @@ export function Hero({ persona, setPersona }: HeroProps) {
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-200 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-hkjf-red" />
-                  <span>Cappeler Str. 130, 35043 Marburg</span>
+                  <span>Lintzingsweg 1a, 35043 Marburg-Cappel</span>
                 </p>
               </div>
             </div>

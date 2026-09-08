@@ -18,14 +18,14 @@ export function Navbar() {
           
           {/* Brand / Logo */}
           <Link href="/" className="flex items-center gap-3 shrink-0 py-2">
-            <div className="relative w-44 h-12 sm:w-52 sm:h-14 flex items-center">
+            <div className="relative h-12 sm:h-14 w-48 sm:w-56 flex items-center">
               <Image
-                src="/assets/hkjf_logo.png"
+                src="/assets/hkjf_logo.svg"
                 alt="Hessische Kinder- und Jugendfeuerwehr"
-                width={208}
-                height={56}
+                width={220}
+                height={60}
                 priority
-                className="object-contain"
+                className="h-full w-auto object-contain"
               />
             </div>
           </Link>

@@ -19,13 +19,13 @@ export function ArrivalGuide() {
     {
       num: 1,
       title: "Navigation & Anfahrt",
-      subtitle: "Navi-Ziel: Cappeler Str. 130, 35043 Marburg",
+      subtitle: "Navi-Ziel: Lintzingsweg 1a, 35043 Marburg-Cappel",
       icon: Navigation,
       content: (
         <div className="space-y-3 text-xs sm:text-sm text-slate-600">
           <p>
-            Gib in dein Navi <strong>Cappeler Straße 130, 35043 Marburg</strong> ein.
-            Die Zufahrt ist über die Hauptstraße gut beschildert (&bdquo;Hessische Landesfeuerwehrschule / JFAZ&ldquo;).
+            Gib in dein Navi <strong>Lintzingsweg 1a, 35043 Marburg-Cappel</strong> ein.
+            Die Zufahrt zum JFAZ-Campus ist vor Ort gut ausgeschildert.
           </p>
           <div className="flex flex-wrap gap-2 pt-1">
             <Button
@@ -34,7 +34,7 @@ export function ArrivalGuide() {
               className="bg-hkjf-red hover:bg-hkjf-redDark text-white font-bold gap-1.5"
             >
               <a
-                href="https://maps.google.com/?q=Cappeler+Str.+130,+35043+Marburg"
+                href="https://maps.google.com/?q=Lintzingsweg+1a,+35043+Marburg"
                 target="_blank"
                 rel="noopener noreferrer"
               >

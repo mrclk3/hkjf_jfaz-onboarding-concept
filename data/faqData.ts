@@ -47,7 +47,7 @@ export const faqList: FaqItem[] = [
     id: "parken",
     category: "anreise",
     question: "Wo kann ich mein Auto oder den Feuerwehr-MTW parken?",
-    answer: "Auf dem Gelände stehen ausreichend kostenfreie Parkplätze für Lehrgangsteilnehmer zur Verfügung. Die Zufahrt erfolgt über die Schrankenanlage in der Cappeler Straße 130.",
+    answer: "Auf dem Gelände stehen ausreichend kostenfreie Parkplätze für Lehrgangsteilnehmer zur Verfügung. Die Zufahrt erfolgt über den Lintzingsweg 1a in Marburg-Cappel.",
     keywords: ["parken", "parkplatz", "auto", "pkw", "mtw", "schranke", "anfahrt"],
   },
   {
