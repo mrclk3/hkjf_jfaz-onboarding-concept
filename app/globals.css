@@ -73,3 +73,37 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Print Stylesheet */
+@media print {
+  @page {
+    margin: 1cm;
+    size: A4 portrait;
+  }
+  nav, footer, header, .print\:hidden {
+    display: none !important;
+  }
+  body, html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  #packliste {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: #ffffff !important;
+    width: 100% !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+}

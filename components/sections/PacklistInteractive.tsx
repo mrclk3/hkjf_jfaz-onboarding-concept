@@ -10,6 +10,7 @@ import {
   Info,
   GraduationCap,
   ChevronDown,
+  Printer,
 } from "lucide-react";
 import { initialPackItems, packCategories, PackItem } from "@/data/packlistData";
 import { officialCourses } from "@/data/coursesData";
@@ -90,6 +91,10 @@ export function PacklistInteractive({
     } catch (e) {}
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   const totalItems = combinedPackItems.length;
   const packedCount = combinedPackItems.filter((item) =>
     checkedIds.includes(item.id)
@@ -110,12 +115,40 @@ export function PacklistInteractive({
   return (
     <section
       id="packliste"
-      className="py-16 sm:py-20 bg-white border-b border-border/70 scroll-mt-20"
+      className="py-16 sm:py-20 bg-white border-b border-border/70 scroll-mt-20 print:py-4 print:border-none"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 print:px-0">
         
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8">
+        {/* Dedicated Print-Only Header (visible on paper / PDF) */}
+        <div className="hidden print:block mb-6 pb-4 border-b-2 border-slate-800">
+          <div className="flex justify-between items-start">
+            <div>
+              <span className="text-[10pt] font-bold uppercase tracking-wider text-slate-600 block">
+                Hessische Kinder- und Jugendfeuerwehr | JFAZ Marburg
+              </span>
+              <h1 className="text-2xl font-black text-slate-900 mt-1">
+                Offizielle Lehrgangs-Packliste
+              </h1>
+            </div>
+            <div className="text-right text-[9pt] text-slate-600 space-y-0.5">
+              <p><strong>Standort:</strong> Lintzingsweg 1a, 35043 Marburg-Cappel</p>
+              <p><strong>Bettwäsche:</strong> Vor Ort vorhanden (Handtücher mitbringen)</p>
+            </div>
+          </div>
+
+          <div className="mt-3 p-3 bg-slate-50 rounded-lg text-[9.5pt] space-y-1.5 border border-slate-300">
+            <p><strong>Ausgewählter Lehrgang:</strong> {activeCourse.title} ({activeCourse.duration})</p>
+            <p><strong>Dresscode / Kleidungsempfehlung:</strong> {activeCourse.clothingBadge} — {activeCourse.clothingAdvice}</p>
+            <div className="pt-2 flex gap-8 border-t border-slate-200">
+              <span><strong>Name:</strong> ____________________________________</span>
+              <span><strong>Zimmer-Nr.:</strong> __________</span>
+              <span><strong>Anreisetag:</strong> ______________</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Screen Header */}
+        <div className="text-center max-w-3xl mx-auto mb-8 print:hidden">
           <Badge variant="green" className="mb-3">
             Interaktive Checkliste
           </Badge>
@@ -124,12 +157,12 @@ export function PacklistInteractive({
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600">
             Nichts mehr zuhause vergessen! Hake deine Sachen direkt auf dem Smartphone oder Laptop
-            ab. Dein Fortschritt wird automatisch auf diesem Gerät gespeichert.
+            ab oder drucke dir deine Kofferliste mit 1-Klick aus.
           </p>
         </div>
 
         {/* Course-Personalized Banner */}
-        <div className="max-w-3xl mx-auto mb-8 bg-gradient-to-br from-hkjf-navy via-hkjf-navyDark to-[#18203d] rounded-2xl p-5 sm:p-6 text-white shadow-xl border border-blue-900/50 space-y-4">
+        <div className="max-w-3xl mx-auto mb-8 bg-gradient-to-br from-hkjf-navy via-hkjf-navyDark to-[#18203d] rounded-2xl p-5 sm:p-6 text-white shadow-xl border border-blue-900/50 space-y-4 print:hidden">
           
           {/* Top Row: Context Badge & Course Switcher */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
@@ -201,9 +234,9 @@ export function PacklistInteractive({
           </div>
         </div>
 
-        {/* Progress Card */}
-        <div className="max-w-3xl mx-auto bg-hkjf-sand/40 border-2 border-slate-200/90 rounded-2xl p-6 mb-8 shadow-sm">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
+        {/* Progress & Action Card */}
+        <div className="max-w-3xl mx-auto bg-hkjf-sand/40 border-2 border-slate-200/90 rounded-2xl p-6 mb-8 shadow-sm print:hidden">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-3">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
                 Pack-Fortschritt
@@ -216,15 +249,25 @@ export function PacklistInteractive({
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePrint}
+                className="text-xs font-bold gap-1.5 bg-white text-slate-700 hover:bg-slate-100 hover:text-hkjf-navy shadow-xs border-slate-300"
+                title="Packliste für den Koffer als PDF speichern oder drucken"
+              >
+                <Printer className="w-3.5 h-3.5 text-hkjf-red" />
+                <span>Drucken / PDF</span>
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleCheckAll}
-                className="text-xs font-bold gap-1 bg-white hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300"
+                className="text-xs font-bold gap-1 bg-white hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 shadow-xs"
               >
-                <CheckCheck className="w-3.5 h-3.5" />
-                <span>Alle abhaken</span>
+                <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Alle</span>
               </Button>
               <Button
                 variant="ghost"
@@ -233,7 +276,7 @@ export function PacklistInteractive({
                 className="text-xs text-slate-500 hover:text-hkjf-red gap-1"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Zurücksetzen</span>
+                <span>Reset</span>
               </Button>
             </div>
           </div>
@@ -251,8 +294,8 @@ export function PacklistInteractive({
           )}
         </div>
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
+        {/* Category Filters (Screen Only) */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8 print:hidden">
           {packCategories.map((cat) => {
             // Count items in this category
             const count =
@@ -289,8 +332,8 @@ export function PacklistInteractive({
           })}
         </div>
 
-        {/* Items Grid */}
-        <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Items Grid (Responsive Screen & Clean 2-Column Print) */}
+        <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 print:grid-cols-2 print:gap-2 print:max-w-none">
           {filteredItems.map((item) => {
             const isChecked = isMounted && checkedIds.includes(item.id);
 
@@ -298,7 +341,7 @@ export function PacklistInteractive({
               <div
                 key={item.id}
                 onClick={() => toggleItem(item.id)}
-                className={`p-4 rounded-xl border-2 transition-all duration-150 cursor-pointer flex items-start gap-3 select-none ${
+                className={`p-4 rounded-xl border-2 transition-all duration-150 cursor-pointer flex items-start gap-3 select-none print:p-2 print:border print:border-slate-300 print:rounded-md print:bg-white print:break-inside-avoid ${
                   isChecked
                     ? "bg-emerald-50/50 border-emerald-400/80 text-slate-500"
                     : item.isCourseSpecific
@@ -308,34 +351,34 @@ export function PacklistInteractive({
               >
                 <div className="mt-0.5 shrink-0">
                   {isChecked ? (
-                    <div className="w-5 h-5 rounded-md bg-emerald-600 text-white flex items-center justify-center">
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    <div className="w-5 h-5 rounded-md bg-emerald-600 text-white flex items-center justify-center print:border print:border-slate-800 print:bg-white print:text-black">
+                      <Check className="w-3.5 h-3.5 stroke-[3] print:stroke-black" />
                     </div>
                   ) : (
                     <div
-                      className={`w-5 h-5 rounded-md border-2 bg-white ${
+                      className={`w-5 h-5 rounded-md border-2 bg-white print:border-slate-800 ${
                         item.isCourseSpecific ? "border-amber-400" : "border-slate-300"
                       }`}
                     />
                   )}
                 </div>
 
-                <div className="flex-grow text-xs sm:text-sm">
+                <div className="flex-grow text-xs sm:text-sm print:text-[9.5pt]">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span
                       className={`font-semibold ${
-                        isChecked ? "line-through text-slate-400" : "text-hkjf-navy"
+                        isChecked ? "line-through text-slate-400 print:no-underline print:text-black" : "text-hkjf-navy print:text-black"
                       }`}
                     >
                       {item.label}
                     </span>
                     {item.isCourseSpecific && (
-                      <span className="text-[9px] uppercase font-black text-amber-900 bg-amber-200/80 px-1.5 py-0.5 rounded">
-                        Lehrgangs-Bedarf
+                      <span className="text-[9px] uppercase font-black text-amber-900 bg-amber-200/80 px-1.5 py-0.5 rounded print:border print:border-slate-400 print:bg-slate-100 print:text-slate-800">
+                        Sonderbedarf
                       </span>
                     )}
                     {item.recommended && !isChecked && (
-                      <span className="text-[9px] uppercase font-black text-hkjf-red bg-red-100 px-1.5 py-0.5 rounded">
+                      <span className="text-[9px] uppercase font-black text-hkjf-red bg-red-100 px-1.5 py-0.5 rounded print:border print:border-slate-400 print:bg-slate-100 print:text-slate-800">
                         Wichtig
                       </span>
                     )}
@@ -343,8 +386,8 @@ export function PacklistInteractive({
 
                   {item.courseReason && (
                     <p
-                      className={`text-[11px] mt-1 leading-snug ${
-                        isChecked ? "text-slate-400" : "text-amber-800/80"
+                      className={`text-[11px] mt-1 leading-snug print:text-[8.5pt] ${
+                        isChecked ? "text-slate-400 print:text-slate-600" : "text-amber-800/80 print:text-slate-600"
                       }`}
                     >
                       💡 {item.courseReason}
@@ -354,6 +397,11 @@ export function PacklistInteractive({
               </div>
             );
           })}
+        </div>
+
+        {/* Dedicated Print-Only Footer */}
+        <div className="hidden print:block mt-6 pt-3 border-t border-slate-300 text-center text-[8.5pt] text-slate-500">
+          <p>Hessische Kinder- und Jugendfeuerwehr | Bildungsstätte JFAZ Marburg | www.hkjf.de</p>
         </div>
 
       </div>

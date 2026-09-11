@@ -40,44 +40,62 @@ export default function HomePage() {
   return (
     <div className="flex flex-col w-full">
       {/* 1. Hero & Persona Switcher */}
-      <Hero
-        persona={persona}
-        setPersona={setPersona}
-        selectedCourseId={selectedCourseId}
-      />
+      <div className="print:hidden">
+        <Hero
+          persona={persona}
+          setPersona={setPersona}
+          selectedCourseId={selectedCourseId}
+        />
+      </div>
 
       {/* 2. Official HKJF Course Selector & Personalized Requirements */}
-      <CourseSelectorSection
-        selectedCourseId={selectedCourseId}
-        onSelectCourse={handleSelectCourse}
-      />
+      <div className="print:hidden">
+        <CourseSelectorSection
+          selectedCourseId={selectedCourseId}
+          onSelectCourse={handleSelectCourse}
+        />
+      </div>
 
       {/* 3. Step-by-Step Arrival & Check-in */}
-      <ArrivalGuide />
+      <div className="print:hidden">
+        <ArrivalGuide />
+      </div>
 
       {/* 4. Interactive Campus Map & Building Finder */}
-      <CampusMapInteractive />
+      <div className="print:hidden">
+        <CampusMapInteractive />
+      </div>
 
       {/* 5. Campus & Building Explorer with Tabs */}
-      <CampusExplorer />
+      <div className="print:hidden">
+        <CampusExplorer />
+      </div>
 
       {/* 6. Cappel Surroundings Guide (Aldi, Lidl, tegut, dm, Apotheke, Pizzeria) */}
-      <CappelGuide />
+      <div className="print:hidden">
+        <CappelGuide />
+      </div>
 
       {/* 7. Typical Lehrgang Schedule & Meals */}
-      <ScheduleOverview />
+      <div className="print:hidden">
+        <ScheduleOverview />
+      </div>
 
-      {/* 8. Course-Personalized Interactive Packlist */}
+      {/* 8. Course-Personalized Interactive Packlist (Printable!) */}
       <PacklistInteractive
         selectedCourseId={selectedCourseId}
         onSelectCourse={handleSelectCourse}
       />
 
       {/* 9. FAQ with live search & accordion */}
-      <FaqAccordion />
+      <div className="print:hidden">
+        <FaqAccordion />
+      </div>
 
       {/* 10. Startklar Quiz & Certificate */}
-      <StartklarQuiz />
+      <div className="print:hidden">
+        <StartklarQuiz />
+      </div>
     </div>
   );
 }
