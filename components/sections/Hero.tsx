@@ -2,47 +2,74 @@
 
 import React from "react";
 import Image from "next/image";
-import { Sparkles, CheckCircle, MapPin, Compass, ArrowRight, BedDouble, HelpCircle } from "lucide-react";
+import {
+  Sparkles,
+  CheckCircle,
+  MapPin,
+  Compass,
+  ArrowRight,
+  BedDouble,
+  GraduationCap,
+  ChevronRight,
+  Shirt,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { officialCourses } from "@/data/coursesData";
 
 interface HeroProps {
   persona: "newcomer" | "returner";
   setPersona: (p: "newcomer" | "returner") => void;
+  selectedCourseId: string;
 }
 
-export function Hero({ persona, setPersona }: HeroProps) {
-  return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-white via-hkjf-cream to-hkjf-sand/40 pt-8 pb-16 lg:pt-14 lg:pb-24 border-b border-border/70">
-      
-      {/* Subtle Background Accent Fire/Glow */}
-      <div className="absolute top-0 right-1/4 -translate-y-1/2 w-96 h-96 bg-red-100/60 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-10 w-80 h-80 bg-amber-100/50 rounded-full blur-3xl pointer-events-none" />
+export function Hero({ persona, setPersona, selectedCourseId }: HeroProps) {
+  const activeCourse =
+    officialCourses.find((c) => c.id === selectedCourseId) || officialCourses[0];
 
+  return (
+    <section className="relative overflow-hidden bg-gradient-to-b from-white via-hkjf-cream to-hkjf-sand/40 pt-8 pb-16 lg:pt-12 lg:pb-20 border-b border-border/70">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Top Badges & Title */}
-        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 bg-red-50 text-hkjf-red border border-red-200/80 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6 shadow-sm">
+        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-8">
+          <div className="inline-flex items-center gap-2 bg-red-50 text-hkjf-red border border-red-200/80 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-5 shadow-sm">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Offizielles Onboarding-Portal</span>
+            <span>Offizielles Onboarding-Portal der HKJF</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-hkjf-navy tracking-tight leading-[1.15] mb-5">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-hkjf-navy tracking-tight leading-[1.15] mb-4">
             Willkommen an deiner Bildungsstätte im{" "}
             <span className="text-hkjf-red underline decoration-hkjf-red/30 decoration-4 underline-offset-4">
               JFAZ Marburg
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
+          <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mb-5">
             Dein interaktiver Wegbegleiter für eine entspannte Anreise, den Check-in,
-            Zimmer &amp; Verpflegung sowie alle wichtigen Infos rund um deinen Lehrgang.
+            Zimmer &amp; Verpflegung sowie alle lehrgangsspezifischen Infos.
           </p>
+
+          {/* Lehrgang Quick Badge Anchor */}
+          <a
+            href="#lehrgangs-finder"
+            className="inline-flex items-center gap-2.5 bg-white hover:bg-slate-50 text-hkjf-navy border-2 border-slate-200 px-4 py-2 rounded-2xl shadow-sm hover:border-hkjf-red transition-all group max-w-xl text-left"
+          >
+            <div className="p-1.5 rounded-lg bg-red-50 text-hkjf-red shrink-0 group-hover:scale-110 transition-transform">
+              <GraduationCap className="w-4 h-4" />
+            </div>
+            <div className="text-xs">
+              <span className="text-slate-500 font-medium block">Aktuell ausgewählter Lehrgang:</span>
+              <span className="font-extrabold text-hkjf-navy group-hover:text-hkjf-red transition-colors">
+                {activeCourse.title} ({activeCourse.duration})
+              </span>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-hkjf-red shrink-0 ml-1 transition-colors" />
+          </a>
         </div>
 
         {/* Interactive Persona Selector Card */}
-        <div className="max-w-3xl mx-auto mb-12">
+        <div className="max-w-3xl mx-auto mb-10">
           <div className="bg-white/90 backdrop-blur-md rounded-2xl p-2 sm:p-3 border-2 border-slate-200 shadow-lg grid grid-cols-1 sm:grid-cols-2 gap-2">
             
             {/* Persona 1: Erstes Mal hier */}
@@ -163,21 +190,21 @@ export function Hero({ persona, setPersona }: HeroProps) {
                   <ul className="space-y-2.5 text-xs sm:text-sm text-slate-600">
                     <li className="flex items-start gap-2.5">
                       <span className="w-5 h-5 rounded-full bg-red-100 text-hkjf-red font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
-                      <span><strong>Anfahrt &amp; Parken:</strong> Kostenfreie Parkplätze direkt hinter der Schranke.</span>
+                      <span><strong>Lehrgang wählen:</strong> Sieh dir Dresscode und Rauminfos an.</span>
                     </li>
                     <li className="flex items-start gap-2.5">
                       <span className="w-5 h-5 rounded-full bg-red-100 text-hkjf-red font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
-                      <span><strong>Check-in:</strong> Schlüsselkarte an der Pforte abholen (auch sonntags).</span>
+                      <span><strong>Anfahrt &amp; Parken:</strong> Kostenfreie Parkplätze direkt hinter der Schranke.</span>
                     </li>
                     <li className="flex items-start gap-2.5">
                       <span className="w-5 h-5 rounded-full bg-red-100 text-hkjf-red font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
-                      <span><strong>Packliste prüfen:</strong> Bettwäsche ist da, Handtuch einpacken!</span>
+                      <span><strong>Check-in:</strong> Schlüsselkarte an der Pforte abholen (auch sonntags).</span>
                     </li>
                   </ul>
                   <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
                     <Button asChild className="w-full bg-hkjf-red hover:bg-hkjf-redDark text-white font-bold">
-                      <a href="#anreise" className="flex items-center justify-center gap-2">
-                        <span>Anreise Schritt für Schritt</span>
+                      <a href="#lehrgangs-finder" className="flex items-center justify-center gap-2">
+                        <span>Lehrgang &amp; Dresscode prüfen</span>
                         <ArrowRight className="w-4 h-4" />
                       </a>
                     </Button>
@@ -190,10 +217,16 @@ export function Hero({ persona, setPersona }: HeroProps) {
                   </h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <a
-                      href="#umgebung"
+                      href="#lehrgangs-finder"
                       className="p-3 rounded-xl bg-slate-50 hover:bg-red-50 hover:text-hkjf-red font-bold text-slate-700 transition-colors border border-slate-100 block"
                     >
-                      🛒 Cappel-Guide (Aldi, Lidl, dm) &rarr;
+                      🎓 Lehrgangsplan &rarr;
+                    </a>
+                    <a
+                      href="#packliste"
+                      className="p-3 rounded-xl bg-slate-50 hover:bg-red-50 hover:text-hkjf-red font-bold text-slate-700 transition-colors border border-slate-100 block"
+                    >
+                      🎒 Personalisierte Packliste &rarr;
                     </a>
                     <a
                       href="#ablauf"
@@ -202,16 +235,10 @@ export function Hero({ persona, setPersona }: HeroProps) {
                       ⏰ Essenszeiten &amp; Ablauf &rarr;
                     </a>
                     <a
-                      href="#packliste"
+                      href="#umgebung"
                       className="p-3 rounded-xl bg-slate-50 hover:bg-red-50 hover:text-hkjf-red font-bold text-slate-700 transition-colors border border-slate-100 block"
                     >
-                      🎒 Packlisten-Check &rarr;
-                    </a>
-                    <a
-                      href="#faq"
-                      className="p-3 rounded-xl bg-slate-50 hover:bg-red-50 hover:text-hkjf-red font-bold text-slate-700 transition-colors border border-slate-100 block"
-                    >
-                      ❓ Häufige Fragen &rarr;
+                      🛒 Cappel-Guide (Einkauf) &rarr;
                     </a>
                   </div>
                 </div>
