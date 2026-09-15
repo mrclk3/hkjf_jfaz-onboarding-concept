@@ -21,9 +21,17 @@ interface HeroProps {
   persona: "newcomer" | "returner";
   setPersona: (p: "newcomer" | "returner") => void;
   selectedCourseId: string;
+  onStartTour?: () => void;
+  onOpenCourseModal?: () => void;
 }
 
-export function Hero({ persona, setPersona, selectedCourseId }: HeroProps) {
+export function Hero({
+  persona,
+  setPersona,
+  selectedCourseId,
+  onStartTour,
+  onOpenCourseModal,
+}: HeroProps) {
   const activeCourse =
     officialCourses.find((c) => c.id === selectedCourseId) || officialCourses[0];
 
@@ -51,21 +59,35 @@ export function Hero({ persona, setPersona, selectedCourseId }: HeroProps) {
           </p>
 
           {/* Lehrgang Quick Badge Anchor */}
-          <a
-            href="#lehrgangs-finder"
-            className="inline-flex items-center gap-2.5 bg-white hover:bg-slate-50 text-hkjf-navy border-2 border-slate-200 px-4 py-2 rounded-2xl shadow-sm hover:border-hkjf-red transition-all group max-w-xl text-left"
-          >
-            <div className="p-1.5 rounded-lg bg-red-50 text-hkjf-red shrink-0 group-hover:scale-110 transition-transform">
-              <GraduationCap className="w-4 h-4" />
-            </div>
-            <div className="text-xs">
-              <span className="text-slate-500 font-medium block">Aktuell ausgewählter Lehrgang:</span>
-              <span className="font-extrabold text-hkjf-navy group-hover:text-hkjf-red transition-colors">
-                {activeCourse.title} ({activeCourse.duration})
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-hkjf-red shrink-0 ml-1 transition-colors" />
-          </a>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={onOpenCourseModal ? onOpenCourseModal : undefined}
+              className="inline-flex items-center gap-2.5 bg-white hover:bg-slate-50 text-hkjf-navy border-2 border-slate-200 px-4 py-2 rounded-2xl shadow-sm hover:border-hkjf-red transition-all group max-w-xl text-left cursor-pointer"
+              title="Klicken, um Lehrgangsauswahl zu öffnen"
+            >
+              <div className="p-1.5 rounded-lg bg-red-50 text-hkjf-red shrink-0 group-hover:scale-110 transition-transform">
+                <GraduationCap className="w-4 h-4" />
+              </div>
+              <div className="text-xs">
+                <span className="text-slate-500 font-medium block">Aktuell ausgewählter Lehrgang (Klicken zum Ändern):</span>
+                <span className="font-extrabold text-hkjf-navy group-hover:text-hkjf-red transition-colors">
+                  {activeCourse.title} ({activeCourse.duration})
+                </span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-hkjf-red shrink-0 ml-1 transition-colors" />
+            </button>
+
+            {onStartTour && (
+              <Button
+                onClick={onStartTour}
+                className="bg-hkjf-red hover:bg-hkjf-redDark text-white font-extrabold text-xs sm:text-sm px-5 py-2.5 rounded-2xl shadow-md gap-2 group transition-all"
+              >
+                <Compass className="w-4 h-4" />
+                <span>Geführte Onboarding-Tour starten</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Interactive Persona Selector Card */}
@@ -202,11 +224,23 @@ export function Hero({ persona, setPersona, selectedCourseId }: HeroProps) {
                     </li>
                   </ul>
                   <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
-                    <Button asChild className="w-full bg-hkjf-red hover:bg-hkjf-redDark text-white font-bold">
-                      <a href="#lehrgangs-finder" className="flex items-center justify-center gap-2">
-                        <span>Lehrgang &amp; Dresscode prüfen</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </a>
+                    <Button
+                      onClick={onStartTour ? onStartTour : undefined}
+                      asChild={!onStartTour}
+                      className="w-full bg-hkjf-red hover:bg-hkjf-redDark text-white font-bold cursor-pointer"
+                    >
+                      {onStartTour ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <Compass className="w-4 h-4" />
+                          <span>Geführte Onboarding-Tour starten</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      ) : (
+                        <a href="#step-lehrgang" className="flex items-center justify-center gap-2">
+                          <span>Lehrgang &amp; Dresscode prüfen</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </a>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -217,25 +251,25 @@ export function Hero({ persona, setPersona, selectedCourseId }: HeroProps) {
                   </h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <a
-                      href="#lehrgangs-finder"
+                      href="#step-lehrgang"
                       className="p-3 rounded-xl bg-slate-50 hover:bg-red-50 hover:text-hkjf-red font-bold text-slate-700 transition-colors border border-slate-100 block"
                     >
                       🎓 Lehrgangsplan &rarr;
                     </a>
                     <a
-                      href="#packliste"
+                      href="#step-packliste"
                       className="p-3 rounded-xl bg-slate-50 hover:bg-red-50 hover:text-hkjf-red font-bold text-slate-700 transition-colors border border-slate-100 block"
                     >
                       🎒 Personalisierte Packliste &rarr;
                     </a>
                     <a
-                      href="#ablauf"
+                      href="#step-ablauf"
                       className="p-3 rounded-xl bg-slate-50 hover:bg-red-50 hover:text-hkjf-red font-bold text-slate-700 transition-colors border border-slate-100 block"
                     >
                       ⏰ Essenszeiten &amp; Ablauf &rarr;
                     </a>
                     <a
-                      href="#umgebung"
+                      href="#step-umgebung"
                       className="p-3 rounded-xl bg-slate-50 hover:bg-red-50 hover:text-hkjf-red font-bold text-slate-700 transition-colors border border-slate-100 block"
                     >
                       🛒 Cappel-Guide (Einkauf) &rarr;
