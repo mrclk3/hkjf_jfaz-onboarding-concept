@@ -8,9 +8,19 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-export function FaqAccordion() {
+interface FaqAccordionProps {
+  isOnline?: boolean;
+}
+
+export function FaqAccordion({ isOnline = false }: FaqAccordionProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>(isOnline ? "online" : "all");
+
+  React.useEffect(() => {
+    if (isOnline) {
+      setSelectedCategory("online");
+    }
+  }, [isOnline]);
 
   const filteredFaqs = faqList.filter((faq) => {
     const matchesCategory =

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
-import { Award, CheckCircle2, XCircle, RotateCcw, Sparkles, ShieldCheck } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Award, CheckCircle2, XCircle, RotateCcw, Sparkles, Laptop } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -13,7 +13,7 @@ interface Question {
   options: { text: string; correct: boolean; explanation: string }[];
 }
 
-const quizQuestions: Question[] = [
+const physicalQuizQuestions: Question[] = [
   {
     id: 1,
     question: "Muss ich eigene Bettwäsche ins JFAZ mitbringen?",
@@ -21,7 +21,7 @@ const quizQuestions: Question[] = [
       {
         text: "Ja, Kissen, Decke und Bezüge müssen komplett mitgebracht werden.",
         correct: false,
-        explanation: "Falsch: Bettwäsche ist im JFAZ vorhanden und bezogen!",
+        explanation: "Falsch: Bettwäsche ist im JFAZ vorhanden und frisch bezogen!",
       },
       {
         text: "Nein, Bettwäsche ist vorhanden und frisch bezogen. Nur eigene Handtücher einpacken!",
@@ -79,9 +79,88 @@ const quizQuestions: Question[] = [
   },
 ];
 
-export function StartklarQuiz() {
+const onlineQuizQuestions: Question[] = [
+  {
+    id: 1,
+    question: "Wann solltest du dich am Seminartag in den virtuellen Raum einwählen?",
+    options: [
+      {
+        text: "Erst 10 Minuten nach offiziellem Beginn.",
+        correct: false,
+        explanation: "Falsch: Pünktlichkeit ist auch online wichtig für den reibungslosen Seminarstart.",
+      },
+      {
+        text: "Ca. 15 Minuten vor Seminarbeginn für den Ton- und Kamera-Check.",
+        correct: true,
+        explanation: "Richtig! So vermeidest du Hektik und stellst sicher, dass Headset und Bild sauber funktionieren.",
+      },
+      {
+        text: "Einloggen ist optional, man kann die Aufzeichnung später schauen.",
+        correct: false,
+        explanation: "Falsch: Online-Lehrgänge der HKJF sind interaktiv mit Anwesenheitspflicht.",
+      },
+    ],
+  },
+  {
+    id: 2,
+    question: "Gilt für die Teilnahme an Online-Seminaren der HKJF eine Kamera-Pflicht?",
+    options: [
+      {
+        text: "Nein, die Kamera darf durchgehend aus bleiben.",
+        correct: false,
+        explanation: "Falsch: Eine aktive Seminarteilnahme erfordert Bild und Ton.",
+      },
+      {
+        text: "Ja, für anerkannte Lehrgänge (z. B. JuLeiCa) ist die Kamera für Teilnahmenachweis und Gruppenarbeiten anzuschalten.",
+        correct: true,
+        explanation: "Sehr gut! Nur mit eingeschalteter Kamera ist ein lebendiger Austausch in Breakout-Rooms möglich.",
+      },
+      {
+        text: "Nur am Schluss für ein Gruppenfoto.",
+        correct: false,
+        explanation: "Falsch: Die Kamera begleitet die interaktiven Einheiten des Lehrgangs.",
+      },
+    ],
+  },
+  {
+    id: 3,
+    question: "Musst du für diesen Lehrgang persönlich nach Marburg-Cappel reisen?",
+    options: [
+      {
+        text: "Ja, am ersten Vormittag zur Passkontrolle.",
+        correct: false,
+        explanation: "Falsch: Reines Online-Seminar – keine Reise erforderlich!",
+      },
+      {
+        text: "Nein, es ist ein 100% digitales Online-Seminar bequem von zu Hause aus.",
+        correct: true,
+        explanation: "Genau richtig! Du sparst Fahrtzeit, packst keinen Koffer und lernst am eigenen Schreibtisch.",
+      },
+      {
+        text: "Ja, um die Teilnahmebescheinigung abzuholen.",
+        correct: false,
+        explanation: "Falsch: Die Bescheinigung wird digital ausgestellt und in Florix hinterlegt.",
+      },
+    ],
+  },
+];
+
+interface StartklarQuizProps {
+  isOnline?: boolean;
+  courseTitle?: string;
+}
+
+export function StartklarQuiz({ isOnline = false, courseTitle }: StartklarQuizProps) {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
+
+  const activeQuestions = isOnline ? onlineQuizQuestions : physicalQuizQuestions;
+
+  // Reset quiz when course format changes
+  useEffect(() => {
+    setSelectedAnswers({});
+    setShowResults(false);
+  }, [isOnline]);
 
   const handleSelectOption = (questionId: number, optionIndex: number) => {
     setSelectedAnswers((prev) => ({
@@ -92,7 +171,7 @@ export function StartklarQuiz() {
 
   const calculateScore = () => {
     let score = 0;
-    quizQuestions.forEach((q) => {
+    activeQuestions.forEach((q) => {
       const selected = selectedAnswers[q.id];
       if (selected !== undefined && q.options[selected].correct) {
         score += 1;
@@ -104,7 +183,7 @@ export function StartklarQuiz() {
   const handleFinish = () => {
     setShowResults(true);
     const score = calculateScore();
-    if (score === quizQuestions.length) {
+    if (score === activeQuestions.length) {
       try {
         confetti({
           particleCount: 100,
@@ -120,37 +199,39 @@ export function StartklarQuiz() {
     setShowResults(false);
   };
 
-  const isComplete = Object.keys(selectedAnswers).length === quizQuestions.length;
+  const isComplete = Object.keys(selectedAnswers).length === activeQuestions.length;
   const score = calculateScore();
 
   return (
-    <section id="quiz" className="py-16 sm:py-20 bg-white border-b border-border/70 scroll-mt-20">
+    <section id="quiz" className="py-16 sm:py-20 bg-slate-50 border-b border-border/70 scroll-mt-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <Badge variant="gold" className="mb-3">
-            Interaktiver Schnell-Check
+          <Badge variant="default" className="mb-3">
+            {isOnline ? "Online-Startklar-Check" : "Abschluss-Check"}
           </Badge>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-hkjf-navy tracking-tight">
-            Bist du startklar fürs JFAZ?
+            {isOnline ? "Bist du startklar fürs Online-Seminar?" : "Bist du startklar fürs JFAZ?"}
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600">
-            Teste dein Wissen in 3 kurzen Fragen und sichere dir dein persönliches Startklar-Abzeichen!
+            {isOnline
+              ? "Teste in 3 schnellen Fragen, ob du alle Online-Regeln, Einwahlzeiten und Voraussetzungen kennst."
+              : "Teste dein Wissen in 3 kurzen Fragen und sichere dir dein offizielles Startklar-Abzeichen."}
           </p>
         </div>
 
-        {/* Questions List */}
+        {/* Questions Grid */}
         <div className="space-y-6">
-          {quizQuestions.map((q, qIndex) => {
+          {activeQuestions.map((q, qIndex) => {
             const selectedIdx = selectedAnswers[q.id];
 
             return (
-              <Card key={q.id} className="border-2 border-slate-200/90 shadow-sm">
+              <Card key={q.id} className="border-2 border-slate-200/90 shadow-sm overflow-hidden">
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-black uppercase text-hkjf-red">
-                      Frage {qIndex + 1} von {quizQuestions.length}
+                      Frage {qIndex + 1} von {activeQuestions.length}
                     </span>
                   </div>
                   <CardTitle className="text-base sm:text-lg text-hkjf-navy">
@@ -180,7 +261,7 @@ export function StartklarQuiz() {
                         key={optIdx}
                         disabled={showResults}
                         onClick={() => handleSelectOption(q.id, optIdx)}
-                        className={`w-full p-3.5 rounded-xl border-2 text-left text-xs sm:text-sm transition-all duration-150 flex items-start gap-3 select-none ${optionStyle}`}
+                        className={`w-full p-3.5 rounded-xl border-2 text-left text-xs sm:text-sm transition-all duration-150 flex items-start gap-3 select-none cursor-pointer ${optionStyle}`}
                       >
                         <div className="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs bg-white">
                           {String.fromCharCode(65 + optIdx)}
@@ -220,29 +301,33 @@ export function StartklarQuiz() {
               size="lg"
               disabled={!isComplete}
               onClick={handleFinish}
-              className="bg-hkjf-red hover:bg-hkjf-redDark text-white font-bold px-8 shadow-md gap-2"
+              className="bg-hkjf-red hover:bg-hkjf-redDark text-white font-bold px-8 shadow-md gap-2 cursor-pointer"
             >
               <Award className="w-5 h-5" />
-              <span>Antworten auswerten ({Object.keys(selectedAnswers).length}/{quizQuestions.length})</span>
+              <span>Antworten auswerten ({Object.keys(selectedAnswers).length}/{activeQuestions.length})</span>
             </Button>
           ) : (
             <div className="bg-gradient-to-br from-slate-900 to-hkjf-navyDark text-white p-8 rounded-3xl shadow-xl space-y-4 max-w-xl mx-auto animate-in zoom-in-95 duration-300">
               <div className="w-16 h-16 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center mx-auto font-black text-2xl shadow-lg">
-                <Sparkles className="w-8 h-8 text-slate-950" />
+                {isOnline ? <Laptop className="w-8 h-8 text-slate-950" /> : <Sparkles className="w-8 h-8 text-slate-950" />}
               </div>
 
               <div className="space-y-1">
                 <Badge variant="gold" className="font-bold uppercase tracking-wider text-slate-950">
-                  Offizieller Startklar-Nachweis
+                  {isOnline ? "Digital Startklar-Zertifikat" : "Offizieller Startklar-Nachweis"}
                 </Badge>
                 <h3 className="text-2xl font-black">
                   {score === 3
-                    ? "Hervorragend! Du bist 100% startklar!"
+                    ? isOnline
+                      ? "100% startklar fürs Online-Seminar!"
+                      : "Hervorragend! Du bist 100% startklar!"
                     : `Du hast ${score} von 3 Fragen richtig!`}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-300">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                   {score === 3
-                    ? "Du kennst alle Abläufe, die Zimmerregeln und die Cappel-Geheimtipps. Wir wünschen dir einen fantastischen und lehrreichen Aufenthalt im JFAZ Marburg!"
+                    ? isOnline
+                      ? `Du hast deinen digitalen Schreibtisch optimal vorbereitet und kennst alle Online-Regeln für "${courseTitle || "dein Seminar"}". Wir wünschen dir viel Erfolg und produktive Stunden!`
+                      : `Du kennst alle Abläufe, die Zimmerregeln und die Cappel-Geheimtipps. Wir wünschen dir einen fantastischen Aufenthalt im JFAZ Marburg!`
                     : "Lies dir die Tipps oben noch einmal in Ruhe durch, dann bist du bestens vorbereitet."}
                 </p>
               </div>
@@ -252,7 +337,7 @@ export function StartklarQuiz() {
                   variant="outline"
                   size="sm"
                   onClick={handleReset}
-                  className="bg-white/10 hover:bg-white/20 text-white border-white/30 font-bold gap-2"
+                  className="bg-white/10 hover:bg-white/20 text-white border-white/30 font-bold gap-2 cursor-pointer"
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span>Quiz wiederholen</span>

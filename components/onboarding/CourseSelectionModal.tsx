@@ -12,8 +12,10 @@ import {
   ShieldCheck,
   Compass,
   X,
+  Laptop,
+  Building,
 } from "lucide-react";
-import { officialCourses, courseCategories, Course } from "@/data/coursesData";
+import { officialCourses, courseCategories, courseFormatOptions, Course } from "@/data/coursesData";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -34,6 +36,7 @@ export function CourseSelectionModal({
 }: CourseSelectionModalProps) {
   const [tempSelectedId, setTempSelectedId] = useState<string>(selectedCourseId);
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [activeFormat, setActiveFormat] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Smooth animation mounting states
@@ -70,14 +73,23 @@ export function CourseSelectionModal({
     officialCourses.find((c) => c.id === tempSelectedId) || officialCourses[0];
 
   const filteredCourses = officialCourses.filter((course) => {
+    const isOnlineCourse = course.format === "online";
+    const matchesFormat =
+      activeFormat === "all" ||
+      (activeFormat === "online" && isOnlineCourse) ||
+      (activeFormat === "praesenz" && !isOnlineCourse);
+
     const matchesCategory =
       activeCategory === "all" || course.category === activeCategory;
+
     const matchesSearch =
       searchQuery.trim() === "" ||
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.categoryLabel.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+      course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (isOnlineCourse && "online webinar digital".includes(searchQuery.toLowerCase()));
+
+    return matchesFormat && matchesCategory && matchesSearch;
   });
 
   const handleConfirm = () => {
@@ -152,13 +164,47 @@ export function CourseSelectionModal({
             )}
           </div>
 
+          {/* Format Tabs (Präsenz vs Online) */}
+          <div className="flex items-center gap-1.5 p-1 bg-slate-200/70 rounded-xl max-w-fit">
+            {courseFormatOptions.map((fmt) => {
+              const isActive = activeFormat === fmt.id;
+              const count =
+                fmt.id === "all"
+                  ? officialCourses.length
+                  : fmt.id === "online"
+                  ? officialCourses.filter((c) => c.format === "online").length
+                  : officialCourses.filter((c) => c.format !== "online").length;
+
+              return (
+                <button
+                  key={fmt.id}
+                  onClick={() => setActiveFormat(fmt.id)}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    isActive
+                      ? "bg-white text-hkjf-navy shadow-xs font-black"
+                      : "text-slate-600 hover:text-hkjf-navy"
+                  }`}
+                >
+                  <span>{fmt.label}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                      isActive ? "bg-slate-100 text-hkjf-navy" : "bg-slate-300/60 text-slate-600"
+                    }`}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
           {/* Category Tabs */}
           <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar">
             {courseCategories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all border whitespace-nowrap ${
+                className={`px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all border whitespace-nowrap cursor-pointer ${
                   activeCategory === cat.id
                     ? "bg-hkjf-navy text-white border-hkjf-navy shadow-xs scale-[1.02]"
                     : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
@@ -184,6 +230,7 @@ export function CourseSelectionModal({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5">
               {filteredCourses.map((course) => {
                 const isSelected = course.id === tempSelectedId;
+                const isOnline = course.format === "online";
 
                 return (
                   <button
@@ -191,22 +238,41 @@ export function CourseSelectionModal({
                     onClick={() => setTempSelectedId(course.id)}
                     className={`text-left p-3 rounded-xl sm:rounded-2xl border-2 transition-all duration-150 flex items-start gap-2.5 sm:gap-3 group relative cursor-pointer ${
                       isSelected
-                        ? "bg-red-50/50 border-hkjf-red shadow-md ring-2 ring-red-500/15"
+                        ? isOnline
+                          ? "bg-indigo-50/60 border-indigo-600 shadow-md ring-2 ring-indigo-500/20"
+                          : "bg-red-50/50 border-hkjf-red shadow-md ring-2 ring-red-500/15"
                         : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/80"
                     }`}
                   >
                     <div
                       className={`p-2 rounded-xl shrink-0 transition-colors ${
                         isSelected
-                          ? "bg-hkjf-red text-white"
+                          ? isOnline
+                            ? "bg-indigo-600 text-white"
+                            : "bg-hkjf-red text-white"
+                          : isOnline
+                          ? "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100"
                           : "bg-slate-100 text-slate-500 group-hover:text-hkjf-navy"
                       }`}
                     >
-                      <GraduationCap className="w-4 h-4" />
+                      {isOnline ? (
+                        <Laptop className="w-4 h-4" />
+                      ) : (
+                        <GraduationCap className="w-4 h-4" />
+                      )}
                     </div>
 
                     <div className="flex-grow min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                        {isOnline ? (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded font-black bg-indigo-100 text-indigo-700 border border-indigo-200">
+                            💻 Online-Seminar
+                          </span>
+                        ) : (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded font-bold bg-slate-100 text-slate-600">
+                            🏫 Präsenz
+                          </span>
+                        )}
                         <Badge
                           variant="secondary"
                           className="text-[9px] px-1.5 py-0 font-bold bg-slate-100 text-slate-600"
@@ -228,8 +294,19 @@ export function CourseSelectionModal({
                       </h4>
 
                       <div className="mt-1 flex items-center gap-1 text-[11px] text-slate-500">
-                        <Shirt className="w-3 h-3 text-slate-400 shrink-0" />
-                        <span className="truncate">{course.clothingBadge}</span>
+                        {isOnline ? (
+                          <>
+                            <Laptop className="w-3 h-3 text-indigo-500 shrink-0" />
+                            <span className="truncate text-indigo-900 font-medium">
+                              100% digital (Teams / BBB)
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <Shirt className="w-3 h-3 text-slate-400 shrink-0" />
+                            <span className="truncate">{course.clothingBadge}</span>
+                          </>
+                        )}
                       </div>
                     </div>
 
@@ -237,7 +314,9 @@ export function CourseSelectionModal({
                       <div
                         className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${
                           isSelected
-                            ? "bg-hkjf-red text-white shadow-xs scale-110"
+                            ? isOnline
+                              ? "bg-indigo-600 text-white shadow-xs scale-110"
+                              : "bg-hkjf-red text-white shadow-xs scale-110"
                             : "border-2 border-slate-300 bg-white"
                         }`}
                       >
@@ -256,8 +335,18 @@ export function CourseSelectionModal({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
             {/* Left Course Summary */}
             <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-red-100 text-hkjf-red flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-5 h-5" />
+              <div
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                  currentCourse.format === "online"
+                    ? "bg-indigo-100 text-indigo-700"
+                    : "bg-red-100 text-hkjf-red"
+                }`}
+              >
+                {currentCourse.format === "online" ? (
+                  <Laptop className="w-5 h-5" />
+                ) : (
+                  <ShieldCheck className="w-5 h-5" />
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <span className="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">
@@ -266,9 +355,15 @@ export function CourseSelectionModal({
                 <p className="text-xs sm:text-sm font-black text-hkjf-navy truncate">
                   {currentCourse.title}
                 </p>
-                <span className="text-[11px] font-semibold text-emerald-600 block truncate">
-                  Dresscode: {currentCourse.clothingBadge} ({currentCourse.duration})
-                </span>
+                {currentCourse.format === "online" ? (
+                  <span className="text-[11px] font-extrabold text-indigo-700 block truncate">
+                    💻 Reines Online-Seminar – Keine Anreise nach Marburg nötig! ({currentCourse.duration})
+                  </span>
+                ) : (
+                  <span className="text-[11px] font-semibold text-emerald-600 block truncate">
+                    Dresscode: {currentCourse.clothingBadge} ({currentCourse.duration})
+                  </span>
+                )}
               </div>
             </div>
 

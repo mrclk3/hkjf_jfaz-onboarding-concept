@@ -6,18 +6,21 @@ import { CourseSelectorSection } from "@/components/sections/CourseSelectorSecti
 import { ArrivalGuide } from "@/components/sections/ArrivalGuide";
 import { CampusMapInteractive } from "@/components/sections/CampusMapInteractive";
 import { CampusExplorer } from "@/components/sections/CampusExplorer";
+import { VirtualClassroomGuide } from "@/components/sections/VirtualClassroomGuide";
 import { CappelGuide } from "@/components/sections/CappelGuide";
 import { ScheduleOverview } from "@/components/sections/ScheduleOverview";
 import { PacklistInteractive } from "@/components/sections/PacklistInteractive";
 import { FaqAccordion } from "@/components/sections/FaqAccordion";
 import { StartklarQuiz } from "@/components/sections/StartklarQuiz";
-import { useOnboardingFlow, ONBOARDING_STEPS } from "@/hooks/useOnboardingFlow";
+import { useOnboardingFlow } from "@/hooks/useOnboardingFlow";
 import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 import { FloatingFlowBar } from "@/components/onboarding/FloatingFlowBar";
 import { StepFlowFooter } from "@/components/onboarding/StepFlowFooter";
 import { CourseSelectionModal } from "@/components/onboarding/CourseSelectionModal";
 import { TourCompletedModal } from "@/components/onboarding/TourCompletedModal";
 import { officialCourses } from "@/data/coursesData";
+import { MapPin, ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 
 export default function HomePage() {
@@ -25,9 +28,12 @@ export default function HomePage() {
   const [selectedCourseId, setSelectedCourseId] = useState<string>("jf-jugendarbeit-kompakt");
   const [isCourseModalOpen, setIsCourseModalOpen] = useState<boolean>(false);
   const [isTourCompletedModalOpen, setIsTourCompletedModalOpen] = useState<boolean>(false);
+  const [showPhysicalCampusExplore, setShowPhysicalCampusExplore] = useState<boolean>(false);
 
   const activeCourse =
     officialCourses.find((c) => c.id === selectedCourseId) || officialCourses[0];
+
+  const isOnline = activeCourse.format === "online";
 
   const {
     steps,
@@ -43,7 +49,7 @@ export default function HomePage() {
     switchMode,
     startGuidedTour,
     resetProgress,
-  } = useOnboardingFlow();
+  } = useOnboardingFlow(isOnline);
 
   // Load saved course & check if initial modal needs to be shown
   useEffect(() => {
@@ -137,10 +143,14 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* STEP 2: Anreise & Check-in */}
+      {/* STEP 2: Anreise & Check-in / Virtueller Check-in */}
       <div id="step-anreise" className="print:hidden scroll-mt-32">
         <div className="relative">
-          <ArrivalGuide />
+          <ArrivalGuide
+            isOnline={isOnline}
+            courseTitle={activeCourse.title}
+            platform={activeCourse.platform}
+          />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 -mt-6">
             <StepFlowFooter
               currentStep={steps[1]}
@@ -154,11 +164,51 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* STEP 3: Campus & Zimmer (Map & Explorer) */}
+      {/* STEP 3: Campus & Zimmer / Digitaler Seminarraum */}
       <div id="step-campus" className="print:hidden scroll-mt-32">
         <div className="relative">
-          <CampusMapInteractive />
-          <CampusExplorer />
+          {isOnline ? (
+            <>
+              <VirtualClassroomGuide platform={activeCourse.platform} />
+              
+              {/* Optional physical campus exploration for curious online learners */}
+              <div className="bg-slate-50 border-t border-slate-200 py-8 px-4 text-center">
+                <div className="max-w-4xl mx-auto space-y-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowPhysicalCampusExplore(!showPhysicalCampusExplore)}
+                    className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700 hover:text-hkjf-navy bg-white px-5 py-2.5 rounded-xl border border-slate-300 shadow-sm cursor-pointer"
+                  >
+                    <MapPin className="w-4 h-4 text-hkjf-red" />
+                    <span>
+                      {showPhysicalCampusExplore
+                        ? "JFAZ-Campusplan ausblenden"
+                        : "Planst du spätere Präsenzkurse? Reales JFAZ-Gelände erkunden"}
+                    </span>
+                    {showPhysicalCampusExplore ? (
+                      <ChevronUp className="w-4 h-4 text-slate-400" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-slate-400" />
+                    )}
+                  </Button>
+
+                  {showPhysicalCampusExplore && (
+                    <div className="pt-6 text-left animate-in fade-in-50 duration-300">
+                      <CampusMapInteractive />
+                      <CampusExplorer />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <CampusMapInteractive />
+              <CampusExplorer />
+            </>
+          )}
+
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 -mt-6">
             <StepFlowFooter
               currentStep={steps[2]}
@@ -172,10 +222,13 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* STEP 4: Tagesablauf & Essenszeiten */}
+      {/* STEP 4: Tagesablauf & Essenszeiten / Online-Ablauf */}
       <div id="step-ablauf" className="print:hidden scroll-mt-32">
         <div className="relative">
-          <ScheduleOverview />
+          <ScheduleOverview
+            isOnline={isOnline}
+            scheduleNote={activeCourse.onlineScheduleNote}
+          />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 -mt-6">
             <StepFlowFooter
               currentStep={steps[3]}
@@ -189,7 +242,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* STEP 5: Interaktive Packliste */}
+      {/* STEP 5: Interaktive Packliste / Schreibtisch-Checkliste */}
       <div id="step-packliste" className="scroll-mt-32">
         <div className="relative">
           <PacklistInteractive
@@ -209,11 +262,11 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* STEP 6: Cappel-Guide & FAQ */}
+      {/* STEP 6: Cappel-Guide & FAQ / Online-Support & FAQ */}
       <div id="step-umgebung" className="print:hidden scroll-mt-32">
         <div className="relative">
-          <CappelGuide />
-          <FaqAccordion />
+          <CappelGuide isOnline={isOnline} />
+          <FaqAccordion isOnline={isOnline} />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 -mt-6">
             <StepFlowFooter
               currentStep={steps[5]}
@@ -230,7 +283,7 @@ export default function HomePage() {
       {/* STEP 7: Startklar-Quiz & Zertifikat */}
       <div id="step-quiz" className="print:hidden scroll-mt-32">
         <div className="relative">
-          <StartklarQuiz />
+          <StartklarQuiz isOnline={isOnline} courseTitle={activeCourse.title} />
         </div>
       </div>
 
@@ -262,6 +315,7 @@ export default function HomePage() {
         isOpen={isTourCompletedModalOpen}
         onClose={() => setIsTourCompletedModalOpen(false)}
         courseTitle={activeCourse.title}
+        isOnline={isOnline}
         onGoToPacklist={() => goToStep(5, true)}
         onRestartTour={() => {
           resetProgress();

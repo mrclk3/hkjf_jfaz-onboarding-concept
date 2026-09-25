@@ -16,8 +16,9 @@ import {
   Info,
   Package,
   ArrowDown,
+  Laptop,
 } from "lucide-react";
-import { officialCourses, courseCategories, Course } from "@/data/coursesData";
+import { officialCourses, courseCategories, courseFormatOptions, Course } from "@/data/coursesData";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -31,20 +32,30 @@ export function CourseSelectorSection({
   onSelectCourse,
 }: CourseSelectorSectionProps) {
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [activeFormat, setActiveFormat] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const currentCourse =
     officialCourses.find((c) => c.id === selectedCourseId) || officialCourses[0];
 
   const filteredCourses = officialCourses.filter((course) => {
+    const isOnlineCourse = course.format === "online";
+    const matchesFormat =
+      activeFormat === "all" ||
+      (activeFormat === "online" && isOnlineCourse) ||
+      (activeFormat === "praesenz" && !isOnlineCourse);
+
     const matchesCategory =
       activeCategory === "all" || course.category === activeCategory;
+
     const matchesSearch =
       searchQuery.trim() === "" ||
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.categoryLabel.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+      course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (isOnlineCourse && "online webinar digital".includes(searchQuery.toLowerCase()));
+
+    return matchesFormat && matchesCategory && matchesSearch;
   });
 
   const getClothingBadgeClass = (color: Course["clothingBadgeColor"]) => {
@@ -109,13 +120,49 @@ export function CourseSelectorSection({
             )}
           </div>
 
+          {/* Format Tabs (Präsenz vs Online) */}
+          <div className="flex items-center justify-center">
+            <div className="inline-flex items-center gap-1.5 p-1 bg-slate-200/80 rounded-2xl shadow-inner">
+              {courseFormatOptions.map((fmt) => {
+                const isActive = activeFormat === fmt.id;
+                const count =
+                  fmt.id === "all"
+                    ? officialCourses.length
+                    : fmt.id === "online"
+                    ? officialCourses.filter((c) => c.format === "online").length
+                    : officialCourses.filter((c) => c.format !== "online").length;
+
+                return (
+                  <button
+                    key={fmt.id}
+                    onClick={() => setActiveFormat(fmt.id)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                      isActive
+                        ? "bg-white text-hkjf-navy shadow-sm font-black"
+                        : "text-slate-600 hover:text-hkjf-navy"
+                    }`}
+                  >
+                    <span>{fmt.label}</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                        isActive ? "bg-slate-100 text-hkjf-navy" : "bg-slate-300/70 text-slate-700"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Category Tabs */}
           <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
             {courseCategories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                   activeCategory === cat.id
                     ? "bg-hkjf-navy text-white border-hkjf-navy shadow-sm scale-[1.02]"
                     : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
@@ -143,29 +190,49 @@ export function CourseSelectorSection({
             ) : (
               filteredCourses.map((course) => {
                 const isSelected = course.id === currentCourse.id;
+                const isOnline = course.format === "online";
 
                 return (
                   <button
                     key={course.id}
                     onClick={() => onSelectCourse(course.id)}
-                    className={`w-full text-left p-4 rounded-2xl border-2 transition-all duration-200 flex items-start gap-3.5 group relative ${
+                    className={`w-full text-left p-4 rounded-2xl border-2 transition-all duration-200 flex items-start gap-3.5 group relative cursor-pointer ${
                       isSelected
-                        ? "bg-white border-hkjf-red shadow-md ring-2 ring-red-500/10"
+                        ? isOnline
+                          ? "bg-white border-indigo-600 shadow-md ring-2 ring-indigo-500/15"
+                          : "bg-white border-hkjf-red shadow-md ring-2 ring-red-500/10"
                         : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/70"
                     }`}
                   >
                     <div
                       className={`p-2 rounded-xl shrink-0 transition-colors ${
                         isSelected
-                          ? "bg-red-50 text-hkjf-red"
+                          ? isOnline
+                            ? "bg-indigo-600 text-white"
+                            : "bg-red-50 text-hkjf-red"
+                          : isOnline
+                          ? "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100"
                           : "bg-slate-100 text-slate-500 group-hover:text-hkjf-navy"
                       }`}
                     >
-                      <GraduationCap className="w-5 h-5" />
+                      {isOnline ? (
+                        <Laptop className="w-5 h-5" />
+                      ) : (
+                        <GraduationCap className="w-5 h-5" />
+                      )}
                     </div>
 
                     <div className="flex-grow min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
+                        {isOnline ? (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded font-black bg-indigo-100 text-indigo-700 border border-indigo-200">
+                            💻 Online
+                          </span>
+                        ) : (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-100 text-slate-600">
+                            🏫 Präsenz
+                          </span>
+                        )}
                         <Badge
                           variant="secondary"
                           className="text-[10px] px-1.5 py-0 font-bold bg-slate-100 text-slate-600"
@@ -180,7 +247,7 @@ export function CourseSelectorSection({
 
                       <h4
                         className={`text-xs sm:text-sm font-bold leading-snug transition-colors ${
-                          isSelected ? "text-hkjf-navy" : "text-slate-800"
+                          isSelected ? "text-hkjf-navy font-black" : "text-slate-800"
                         }`}
                       >
                         {course.title}
@@ -189,7 +256,11 @@ export function CourseSelectorSection({
 
                     <div className="shrink-0 pt-1">
                       {isSelected ? (
-                        <div className="w-6 h-6 rounded-full bg-hkjf-red text-white flex items-center justify-center shadow-sm">
+                        <div
+                          className={`w-6 h-6 rounded-full text-white flex items-center justify-center shadow-sm ${
+                            isOnline ? "bg-indigo-600" : "bg-hkjf-red"
+                          }`}
+                        >
                           <Check className="w-3.5 h-3.5 stroke-[3]" />
                         </div>
                       ) : (
@@ -207,12 +278,25 @@ export function CourseSelectorSection({
             <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-xl overflow-hidden">
               
               {/* Profile Header */}
-              <div className="bg-gradient-to-r from-hkjf-navy to-hkjf-navyDark p-6 sm:p-7 text-white relative">
+              <div
+                className={`p-6 sm:p-7 text-white relative transition-all ${
+                  currentCourse.format === "online"
+                    ? "bg-gradient-to-r from-slate-900 via-indigo-950 to-hkjf-navy"
+                    : "bg-gradient-to-r from-hkjf-navy to-hkjf-navyDark"
+                }`}
+              >
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <Badge variant="gold" className="font-bold flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Ausgewählter Lehrgang</span>
-                  </Badge>
+                  {currentCourse.format === "online" ? (
+                    <Badge className="bg-amber-400 text-slate-950 font-black border-amber-300 flex items-center gap-1.5">
+                      <Laptop className="w-3.5 h-3.5" />
+                      <span>100% Digitales Online-Seminar</span>
+                    </Badge>
+                  ) : (
+                    <Badge variant="gold" className="font-bold flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Ausgewählter Lehrgang</span>
+                    </Badge>
+                  )}
                   <span className="text-xs font-semibold text-blue-200 flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
                     Dauer: {currentCourse.duration}
@@ -226,6 +310,13 @@ export function CourseSelectorSection({
                 <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
                   {currentCourse.description}
                 </p>
+
+                {currentCourse.format === "online" && (
+                  <div className="mt-3 inline-flex items-center gap-2 bg-indigo-500/25 border border-indigo-400/40 px-3 py-1.5 rounded-xl text-xs text-indigo-100">
+                    <span className="font-extrabold text-amber-300">Hinweis:</span>
+                    <span>Keine Anreise nach Marburg erforderlich. Die Teilnahme erfolgt von deinem Schreibtisch aus!</span>
+                  </div>
+                )}
               </div>
 
               {/* Profile Body */}
@@ -233,17 +324,25 @@ export function CourseSelectorSection({
                 
                 {/* 1. Dresscode & Clothing Banner */}
                 <div
-                  className={`p-4 sm:p-5 rounded-2xl border-2 flex items-start gap-4 ${getClothingBadgeClass(
-                    currentCourse.clothingBadgeColor
-                  )}`}
+                  className={`p-4 sm:p-5 rounded-2xl border-2 flex items-start gap-4 ${
+                    currentCourse.format === "online"
+                      ? "bg-indigo-50/70 text-indigo-900 border-indigo-200"
+                      : getClothingBadgeClass(currentCourse.clothingBadgeColor)
+                  }`}
                 >
                   <div className="p-2.5 rounded-xl bg-white shadow-sm shrink-0 mt-0.5">
-                    <Shirt className="w-5 h-5 text-current" />
+                    {currentCourse.format === "online" ? (
+                      <Laptop className="w-5 h-5 text-indigo-600" />
+                    ) : (
+                      <Shirt className="w-5 h-5 text-current" />
+                    )}
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs font-black uppercase tracking-wider">
-                        Kleidungsempfehlung / Dresscode:
+                        {currentCourse.format === "online"
+                          ? "Arbeitsplatz & Kamera-Voraussetzung:"
+                          : "Kleidungsempfehlung / Dresscode:"}
                       </span>
                       <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-white shadow-xs">
                         {currentCourse.clothingBadge}
@@ -259,18 +358,32 @@ export function CourseSelectorSection({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                      <MapPin className="w-4 h-4 text-hkjf-red" />
-                      <span>Ort &amp; Lehrsäle</span>
+                      {currentCourse.format === "online" ? (
+                        <Laptop className="w-4 h-4 text-indigo-600" />
+                      ) : (
+                        <MapPin className="w-4 h-4 text-hkjf-red" />
+                      )}
+                      <span>
+                        {currentCourse.format === "online"
+                          ? "Plattform & Zugang"
+                          : "Ort & Lehrsäle"}
+                      </span>
                     </div>
                     <p className="text-xs sm:text-sm font-bold text-hkjf-navy">
                       {currentCourse.typicalRooms}
                     </p>
-                    <a
-                      href="#campus"
-                      className="text-[11px] font-bold text-hkjf-red hover:underline inline-block pt-1"
-                    >
-                      Im Campus-Finder anzeigen &rarr;
-                    </a>
+                    {currentCourse.format === "online" ? (
+                      <span className="text-[11px] font-bold text-indigo-600 inline-block pt-1">
+                        Link per E-Mail vor Seminarbeginn
+                      </span>
+                    ) : (
+                      <a
+                        href="#campus"
+                        className="text-[11px] font-bold text-hkjf-red hover:underline inline-block pt-1"
+                      >
+                        Im Campus-Finder anzeigen &rarr;
+                      </a>
+                    )}
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">

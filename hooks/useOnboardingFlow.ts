@@ -86,13 +86,88 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
   },
 ];
 
+export const ONLINE_ONBOARDING_STEPS: OnboardingStep[] = [
+  {
+    id: 1,
+    slug: "lehrgang",
+    targetId: "step-lehrgang",
+    title: "Online-Lehrgang & Format",
+    shortTitle: "Lehrgang",
+    description: "Reines Online-Seminar gewählt (100% digital, keine Anreise nach Marburg).",
+    estimatedTime: "1 Min.",
+    iconName: "GraduationCap",
+  },
+  {
+    id: 2,
+    slug: "anreise",
+    targetId: "step-anreise",
+    title: "Virtueller Check-in & Technik",
+    shortTitle: "Zugang & Technik",
+    description: "Meeting-Link, Einwahlzeiten, Audio/Video-Test & Systemvoraussetzungen.",
+    estimatedTime: "1 Min.",
+    iconName: "Navigation",
+  },
+  {
+    id: 3,
+    slug: "campus",
+    targetId: "step-campus",
+    title: "Digitaler Seminarraum & Netiquette",
+    shortTitle: "Online-Raum",
+    description: "Teams/BigBlueButton, Breakout-Rooms & digitale Zusammenarbeit.",
+    estimatedTime: "1.5 Min.",
+    iconName: "MapPin",
+  },
+  {
+    id: 4,
+    slug: "ablauf",
+    targetId: "step-ablauf",
+    title: "Online-Ablauf & Bildschirmpausen",
+    shortTitle: "Online-Ablauf",
+    description: "Unterrichtsblöcke, Pausenregelung & Verpflegung am heimischen Schreibtisch.",
+    estimatedTime: "1 Min.",
+    iconName: "Clock",
+  },
+  {
+    id: 5,
+    slug: "packliste",
+    targetId: "step-packliste",
+    title: "Schreibtisch- & Technik-Checkliste",
+    shortTitle: "Checkliste",
+    description: "Headset, Webcam, Florix-Zugang & Notizen digital abhaken.",
+    estimatedTime: "1.5 Min.",
+    iconName: "Package",
+  },
+  {
+    id: 6,
+    slug: "umgebung",
+    targetId: "step-umgebung",
+    title: "Online-Support & FAQ",
+    shortTitle: "Support & FAQ",
+    description: "Hilfe bei Verbindungsproblemen, Kamera-Regeln & Seminarunterlagen.",
+    estimatedTime: "1 Min.",
+    iconName: "ShoppingBag",
+  },
+  {
+    id: 7,
+    slug: "quiz",
+    targetId: "step-quiz",
+    title: "Online-Startklar-Quiz & Zertifikat",
+    shortTitle: "Startklar-Quiz",
+    description: "3-Fragen-Check für dein digitales Seminar & offizielles Abzeichen.",
+    estimatedTime: "1 Min.",
+    iconName: "Award",
+  },
+];
+
 export type FlowMode = "guided" | "overview";
 
-export function useOnboardingFlow() {
+export function useOnboardingFlow(isOnline: boolean = false) {
   const [currentStepId, setCurrentStepId] = useState<number>(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [flowMode, setFlowMode] = useState<FlowMode>("guided");
   const [isClient, setIsClient] = useState(false);
+
+  const activeSteps = isOnline ? ONLINE_ONBOARDING_STEPS : ONBOARDING_STEPS;
 
   // Load from localStorage
   useEffect(() => {
@@ -101,7 +176,7 @@ export function useOnboardingFlow() {
       const savedStep = localStorage.getItem("jfaz_flow_step");
       if (savedStep) {
         const stepNum = parseInt(savedStep, 10);
-        if (stepNum >= 1 && stepNum <= ONBOARDING_STEPS.length) {
+        if (stepNum >= 1 && stepNum <= activeSteps.length) {
           setCurrentStepId(stepNum);
         }
       }
@@ -116,7 +191,7 @@ export function useOnboardingFlow() {
     } catch (e) {
       console.error("Could not restore onboarding state from localStorage", e);
     }
-  }, []);
+  }, [activeSteps.length]);
 
   // Save changes to localStorage
   const saveState = useCallback(
@@ -132,30 +207,33 @@ export function useOnboardingFlow() {
     []
   );
 
-  const scrollToStep = useCallback((stepId: number) => {
-    const step = ONBOARDING_STEPS.find((s) => s.id === stepId);
-    if (!step) return;
+  const scrollToStep = useCallback(
+    (stepId: number) => {
+      const step = activeSteps.find((s) => s.id === stepId);
+      if (!step) return;
 
-    setTimeout(() => {
-      const element = document.getElementById(step.targetId);
-      if (element) {
-        const yOffset = -90; // offset for sticky navbar + stepper
-        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-        window.scrollTo({ top: y, behavior: "smooth" });
-      }
-    }, 50);
-  }, []);
+      setTimeout(() => {
+        const element = document.getElementById(step.targetId);
+        if (element) {
+          const yOffset = -90; // offset for sticky navbar + stepper
+          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 50);
+    },
+    [activeSteps]
+  );
 
   const goToStep = useCallback(
     (stepId: number, autoScroll: boolean = true) => {
-      if (stepId < 1 || stepId > ONBOARDING_STEPS.length) return;
+      if (stepId < 1 || stepId > activeSteps.length) return;
       setCurrentStepId(stepId);
       saveState(stepId, completedSteps, flowMode);
       if (autoScroll) {
         scrollToStep(stepId);
       }
     },
-    [completedSteps, flowMode, saveState, scrollToStep]
+    [activeSteps.length, completedSteps, flowMode, saveState, scrollToStep]
   );
 
   const markStepComplete = useCallback(
@@ -174,11 +252,11 @@ export function useOnboardingFlow() {
 
   const nextStep = useCallback(() => {
     markStepComplete(currentStepId);
-    if (currentStepId < ONBOARDING_STEPS.length) {
+    if (currentStepId < activeSteps.length) {
       const nextId = currentStepId + 1;
       goToStep(nextId, true);
     }
-  }, [currentStepId, goToStep, markStepComplete]);
+  }, [activeSteps.length, currentStepId, goToStep, markStepComplete]);
 
   const prevStep = useCallback(() => {
     if (currentStepId > 1) {
@@ -208,13 +286,13 @@ export function useOnboardingFlow() {
   }, [flowMode, saveState, scrollToStep]);
 
   const currentStep =
-    ONBOARDING_STEPS.find((s) => s.id === currentStepId) || ONBOARDING_STEPS[0];
+    activeSteps.find((s) => s.id === currentStepId) || activeSteps[0];
   const progressPercentage = Math.round(
-    ((completedSteps.length) / ONBOARDING_STEPS.length) * 100
+    (completedSteps.length / activeSteps.length) * 100
   );
 
   return {
-    steps: ONBOARDING_STEPS,
+    steps: activeSteps,
     currentStepId,
     currentStep,
     completedSteps,

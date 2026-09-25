@@ -8,9 +8,8 @@ import {
   CheckCircle2,
   Package,
   RotateCcw,
-  Layers,
   ArrowRight,
-  HeartHandshake,
+  Laptop,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +19,7 @@ interface TourCompletedModalProps {
   isOpen: boolean;
   onClose: () => void;
   courseTitle: string;
+  isOnline?: boolean;
   onGoToPacklist: () => void;
   onRestartTour: () => void;
 }
@@ -28,6 +28,7 @@ export function TourCompletedModal({
   isOpen,
   onClose,
   courseTitle,
+  isOnline = false,
   onGoToPacklist,
   onRestartTour,
 }: TourCompletedModalProps) {
@@ -78,10 +79,16 @@ export function TourCompletedModal({
         }`}
       >
         {/* Top Header */}
-        <div className="bg-gradient-to-br from-slate-900 via-hkjf-navy to-hkjf-navyDark p-6 sm:p-8 text-white text-center relative overflow-hidden">
+        <div
+          className={`p-6 sm:p-8 text-white text-center relative overflow-hidden ${
+            isOnline
+              ? "bg-gradient-to-br from-slate-950 via-indigo-950 to-hkjf-navy"
+              : "bg-gradient-to-br from-slate-900 via-hkjf-navy to-hkjf-navyDark"
+          }`}
+        >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
             title="Schließen"
           >
             <X className="w-5 h-5" />
@@ -94,15 +101,17 @@ export function TourCompletedModal({
 
           <div className="inline-flex items-center gap-1.5 bg-amber-400/20 text-amber-300 border border-amber-300/30 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Offiziell 100% Startklar</span>
+            <span>{isOnline ? "Digital 100% Startklar" : "Offiziell 100% Startklar"}</span>
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Glückwunsch! Du bist bereit!
+            {isOnline ? "Dein Online-Seminar kann kommen!" : "Glückwunsch! Du bist bereit!"}
           </h2>
 
           <p className="text-xs sm:text-sm text-slate-200 mt-2 max-w-md mx-auto leading-relaxed">
-            Du hast alle 7 Etappen des JFAZ Onboardings für dein Seminar durchlaufen.
+            {isOnline
+              ? "Du hast alle 7 Etappen des digitalen Onboardings für dein Online-Seminar erfolgreich abgeschlossen."
+              : "Du hast alle 7 Etappen des JFAZ Onboardings für dein Seminar durchlaufen."}
           </p>
         </div>
 
@@ -110,8 +119,12 @@ export function TourCompletedModal({
         <div className="p-5 sm:p-6 space-y-4">
           {/* Active Course Banner */}
           <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-red-100 text-hkjf-red shrink-0">
-              <Sparkles className="w-4 h-4" />
+            <div
+              className={`p-2 rounded-xl shrink-0 ${
+                isOnline ? "bg-indigo-100 text-indigo-700" : "bg-red-100 text-hkjf-red"
+              }`}
+            >
+              {isOnline ? <Laptop className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
             </div>
             <div className="min-w-0">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
@@ -120,56 +133,95 @@ export function TourCompletedModal({
               <p className="text-xs sm:text-sm font-extrabold text-hkjf-navy truncate">
                 {courseTitle}
               </p>
+              {isOnline && (
+                <span className="text-[11px] font-bold text-indigo-600 block">
+                  100% Digital – Teilnahme bequem von zu Hause
+                </span>
+              )}
             </div>
           </div>
 
           {/* Key Checklist Badges */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Dresscode &amp; Saal bekannt</span>
-            </div>
-            <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Anreise &amp; Pforte gecheckt</span>
-            </div>
-            <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Campus &amp; Zimmer erkundet</span>
-            </div>
-            <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Mensa- &amp; Essenszeiten notiert</span>
-            </div>
+            {isOnline ? (
+              <>
+                <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Technik- &amp; Audio-Check geklärt</span>
+                </div>
+                <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Virtueller Check-in bekannt</span>
+                </div>
+                <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Online-Ablauf &amp; Pausen parat</span>
+                </div>
+                <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Schreibtisch-Checkliste komplett</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Dresscode &amp; Saal bekannt</span>
+                </div>
+                <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Anreise &amp; Pforte gecheckt</span>
+                </div>
+                <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Campus &amp; Zimmer erkundet</span>
+                </div>
+                <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Koffer-Packliste vollständig</span>
+                </div>
+              </>
+            )}
           </div>
-
-          <p className="text-xs text-slate-500 text-center leading-relaxed">
-            Wir wünschen dir eine sichere Anreise nach Marburg-Cappel und ein erfolgreiches, kameradschaftliches Seminar!
-          </p>
         </div>
 
-        {/* Footer Actions */}
-        <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 shrink-0 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+        {/* Modal Footer Actions */}
+        <div className="p-5 sm:p-6 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
           <Button
-            variant="outline"
-            onClick={onClose}
-            className="w-full sm:w-auto text-xs font-bold text-slate-600 hover:text-hkjf-navy h-11 px-4 gap-1.5"
-          >
-            <Layers className="w-4 h-4" />
-            <span>Zur Übersicht schließen</span>
-          </Button>
-
-          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => {
               onClose();
-              onGoToPacklist();
+              onRestartTour();
             }}
-            className="w-full sm:w-auto bg-hkjf-red hover:bg-hkjf-redDark text-white font-extrabold text-xs sm:text-sm h-11 px-5 rounded-xl shadow-md gap-2"
+            className="text-xs text-slate-500 hover:text-hkjf-navy gap-1.5 cursor-pointer w-full sm:w-auto"
           >
-            <Package className="w-4 h-4" />
-            <span>Zur Packliste springen</span>
-            <ArrowRight className="w-4 h-4" />
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Tour neu starten</span>
           </Button>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                onClose();
+                onGoToPacklist();
+              }}
+              className="text-xs font-bold gap-1.5 border-slate-300 hover:bg-slate-100 text-hkjf-navy cursor-pointer flex-1 sm:flex-initial"
+            >
+              <Package className="w-4 h-4 text-hkjf-red" />
+              <span>{isOnline ? "Schreibtisch-Checkliste" : "Zur Packliste"}</span>
+            </Button>
+
+            <Button
+              onClick={onClose}
+              className="bg-hkjf-navy hover:bg-hkjf-navyDark text-white font-extrabold text-xs sm:text-sm px-5 rounded-xl shadow-md gap-1.5 cursor-pointer flex-1 sm:flex-initial"
+            >
+              <span>Fertig</span>
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

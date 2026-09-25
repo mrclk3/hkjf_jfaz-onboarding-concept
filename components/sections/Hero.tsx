@@ -54,25 +54,48 @@ export function Hero({
           </h1>
 
           <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mb-5">
-            Dein interaktiver Wegbegleiter für eine entspannte Anreise, den Check-in,
-            Zimmer &amp; Verpflegung sowie alle lehrgangsspezifischen Infos.
+            {activeCourse.format === "online"
+              ? "Dein interaktiver Wegbegleiter für dein Online-Seminar: Virtueller Check-in, Technik-Voraussetzungen, Online-Ablauf und Schreibtisch-Vorbereitung (100% digital)."
+              : "Dein interaktiver Wegbegleiter für eine entspannte Anreise, den Check-in, Zimmer & Verpflegung sowie alle lehrgangsspezifischen Infos."}
           </p>
 
           {/* Lehrgang Quick Badge Anchor */}
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={onOpenCourseModal ? onOpenCourseModal : undefined}
-              className="inline-flex items-center gap-2.5 bg-white hover:bg-slate-50 text-hkjf-navy border-2 border-slate-200 px-4 py-2 rounded-2xl shadow-sm hover:border-hkjf-red transition-all group max-w-xl text-left cursor-pointer"
+              className={`inline-flex items-center gap-2.5 bg-white hover:bg-slate-50 text-hkjf-navy border-2 px-4 py-2 rounded-2xl shadow-sm transition-all group max-w-xl text-left cursor-pointer ${
+                activeCourse.format === "online"
+                  ? "border-indigo-300 hover:border-indigo-600 ring-2 ring-indigo-500/10"
+                  : "border-slate-200 hover:border-hkjf-red"
+              }`}
               title="Klicken, um Lehrgangsauswahl zu öffnen"
             >
-              <div className="p-1.5 rounded-lg bg-red-50 text-hkjf-red shrink-0 group-hover:scale-110 transition-transform">
+              <div
+                className={`p-1.5 rounded-lg shrink-0 group-hover:scale-110 transition-transform ${
+                  activeCourse.format === "online"
+                    ? "bg-indigo-100 text-indigo-700"
+                    : "bg-red-50 text-hkjf-red"
+                }`}
+              >
                 <GraduationCap className="w-4 h-4" />
               </div>
-              <div className="text-xs">
-                <span className="text-slate-500 font-medium block">Aktuell ausgewählter Lehrgang (Klicken zum Ändern):</span>
-                <span className="font-extrabold text-hkjf-navy group-hover:text-hkjf-red transition-colors">
+              <div className="text-xs min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-500 font-medium block">Aktuell ausgewählter Lehrgang:</span>
+                  {activeCourse.format === "online" && (
+                    <span className="text-[10px] font-black uppercase tracking-wider bg-indigo-600 text-white px-1.5 py-0.2 rounded">
+                      💻 Online
+                    </span>
+                  )}
+                </div>
+                <span className="font-extrabold text-hkjf-navy group-hover:text-hkjf-red transition-colors block truncate">
                   {activeCourse.title} ({activeCourse.duration})
                 </span>
+                {activeCourse.format === "online" && (
+                  <span className="text-[10px] font-bold text-indigo-600 block">
+                    100% digital – keine Anreise nach Marburg erforderlich
+                  </span>
+                )}
               </div>
               <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-hkjf-red shrink-0 ml-1 transition-colors" />
             </button>
@@ -80,7 +103,7 @@ export function Hero({
             {onStartTour && (
               <Button
                 onClick={onStartTour}
-                className="bg-hkjf-red hover:bg-hkjf-redDark text-white font-extrabold text-xs sm:text-sm px-5 py-2.5 rounded-2xl shadow-md gap-2 group transition-all"
+                className="bg-hkjf-red hover:bg-hkjf-redDark text-white font-extrabold text-xs sm:text-sm px-5 py-2.5 rounded-2xl shadow-md gap-2 group transition-all cursor-pointer"
               >
                 <Compass className="w-4 h-4" />
                 <span>Geführte Onboarding-Tour starten</span>

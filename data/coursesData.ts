@@ -6,12 +6,17 @@ export interface SpecialPackItem {
   reason: string;
 }
 
+export type CourseFormat = "praesenz" | "online";
+
 export interface Course {
   id: string;
   title: string;
   category: "juleica" | "leitung" | "wettbewerbe" | "kinderfeuerwehr" | "outdoor_sport" | "medien_psychologie";
   categoryLabel: string;
   duration: string;
+  format?: CourseFormat; // defaults to 'praesenz'
+  platform?: string; // e.g. 'Microsoft Teams' or 'BigBlueButton'
+  onlineScheduleNote?: string;
   clothingType: "dienstkleidung" | "freizeit" | "outdoor" | "sport" | "praxis";
   clothingBadge: string;
   clothingBadgeColor: "red" | "blue" | "green" | "amber" | "purple";
@@ -24,13 +29,19 @@ export interface Course {
 }
 
 export const courseCategories = [
-  { id: "all", label: "Alle Lehrgänge" },
+  { id: "all", label: "Alle Fachbereiche" },
   { id: "juleica", label: "JuLeiCa & Grundlagen" },
   { id: "leitung", label: "Leitung & Organisation" },
   { id: "wettbewerbe", label: "Wettbewerbe & Praxis" },
   { id: "kinderfeuerwehr", label: "Kinderfeuerwehr" },
   { id: "outdoor_sport", label: "Outdoor, Sport & Erlebnispädagogik" },
   { id: "medien_psychologie", label: "Medien, Prävention & PSNV" },
+] as const;
+
+export const courseFormatOptions = [
+  { id: "all", label: "Alle Formate" },
+  { id: "praesenz", label: "🏫 Präsenz in Marburg" },
+  { id: "online", label: "💻 Reine Online-Seminare" },
 ] as const;
 
 export const officialCourses: Course[] = [
@@ -578,6 +589,219 @@ export const officialCourses: Course[] = [
         category: "elektronik",
         recommended: true,
         reason: "Für Designarbeiten und Beitragsgestaltung am Rechner.",
+      },
+    ],
+  },
+
+  // --- 7. REINE ONLINE-SEMINARE (100% DIGITAL) ---
+  {
+    id: "jf-online-florix",
+    title: "Florix Hessen – Jugendfeuerwehr digital verwalten (Online-Schulung)",
+    category: "leitung",
+    categoryLabel: "Leitung & Organisation",
+    duration: "1 Tag (oder 2 Abende, je 18:30–21:00 Uhr)",
+    format: "online",
+    platform: "Microsoft Teams & Florix-Schulungsserver",
+    onlineScheduleNote: "Online-Block mit Bildschirmpausen & Übungsphasen im Schulungssystem",
+    clothingType: "freizeit",
+    clothingBadge: "💻 Homeoffice / Bequem am Schreibtisch",
+    clothingBadgeColor: "blue",
+    clothingAdvice: "Bequeme Kleidung für deinen heimischen Schreibtisch. Headset und Webcam empfohlen.",
+    targetAudience: "Jugendfeuerwehrwarte, Schriftführer, Florix-Verantwortliche",
+    typicalRooms: "💻 Virtueller Seminarraum (Teams)",
+    description: "Reines Online-Seminar: Das offizielle Verwaltungsprogramm der hessischen Feuerwehren für die Jugendarbeit. Mitglieder erfassen, Lehrgänge beantragen, Berichte generieren und Statistiken rechtssicher pflegen – direkt am eigenen PC.",
+    highlights: ["Florix-Stammdaten & Jugendfeuerwehr-Mitgliederverwaltung", "Lehrgangsanträge & Teilnahmenachweise digital", "Statistiken, Datenschutz & Rechteverwaltung"],
+    specialPackItems: [
+      {
+        id: "spec-online-headset",
+        label: "Headset mit Mikrofon",
+        category: "elektronik",
+        recommended: true,
+        reason: "Verhindert störendes Echo im Seminarraum und sorgt für klare Sprachqualität.",
+      },
+      {
+        id: "spec-online-2screens",
+        label: "Zweiter Bildschirm oder Tablet (optional)",
+        category: "elektronik",
+        recommended: false,
+        reason: "Ideal, um auf einem Bildschirm den Dozenten zu sehen und auf dem anderen in Florix mitzuklicken.",
+      },
+      {
+        id: "spec-online-florix-zugang",
+        label: "Notizen zu deinen Florix-Zugangsdaten der Heimatfeuerwehr",
+        category: "dokumente",
+        recommended: true,
+        reason: "Für individuelle Fragen zu deinem Benutzerkonto.",
+      },
+    ],
+  },
+  {
+    id: "jf-online-rechte-und-pflichten",
+    title: "Rechte & Pflichten in der Jugendfeuerwehr (Online-Webinar)",
+    category: "juleica",
+    categoryLabel: "JuLeiCa & Grundlagen",
+    duration: "2 Abende (je 18:30 – 21:30 Uhr)",
+    format: "online",
+    platform: "Microsoft Teams / BigBlueButton",
+    onlineScheduleNote: "Abend-Seminar: 18:30 – 21:30 Uhr (inkl. 20 Min. Bildschirmpause)",
+    clothingType: "freizeit",
+    clothingBadge: "💻 Bequem am Schreibtisch (Kamera aktiv)",
+    clothingBadgeColor: "blue",
+    clothingAdvice: "Zivile Kleidung am PC. Kamera sollte für interaktive Fallbeispiele eingeschaltet sein.",
+    targetAudience: "Jugendfeuerwehrwarte, Betreuer/innen und angehende Jugendleiter/innen",
+    typicalRooms: "💻 Virtueller Seminarraum",
+    description: "Reines Online-Seminar: Aufsichtspflicht, Haftungsfragen, Jugendschutzgesetz und Unfallversicherung kompakt von zu Hause aus. Ideal für alle, die unter der Woche abends lernen möchten, ohne nach Marburg zu fahren.",
+    highlights: ["Aufsichtspflicht & Garantenstellung praxisnah", "Versicherungsschutz über die UKH", "Fallanalysen in digitalen Breakout-Rooms"],
+    specialPackItems: [
+      {
+        id: "spec-recht-online-faelle",
+        label: "Eigene rechtliche Fragestellungen aus deiner Jugendfeuerwehr",
+        category: "dokumente",
+        recommended: true,
+        reason: "Die Dozenten nehmen eure konkreten Praxisfälle direkt in die Online-Diskussion auf.",
+      },
+      {
+        id: "spec-online-headset-recht",
+        label: "Headset / Kopfhörer mit Mikrofon",
+        category: "elektronik",
+        recommended: true,
+        reason: "Wichtig für die Teilnahme an den Kleingruppen-Diskussionen.",
+      },
+    ],
+  },
+  {
+    id: "jf-online-kindeswohl",
+    title: "Kindeswohl schützen – Schutzkonzepte & Prävention (Online-Schulung)",
+    category: "medien_psychologie",
+    categoryLabel: "Medien, Prävention & PSNV",
+    duration: "1 Tag (09:00 – 16:00 Uhr digital)",
+    format: "online",
+    platform: "Microsoft Teams",
+    onlineScheduleNote: "09:00 – 16:00 Uhr mit 60 Min. Mittagspause & stündlichen 10-Min-Pausen",
+    clothingType: "freizeit",
+    clothingBadge: "💻 Homeoffice (geschützter Raum)",
+    clothingBadgeColor: "purple",
+    clothingAdvice: "Ruhige Arbeitsumgebung zu Hause, da vertrauliche Themen behandelt werden.",
+    targetAudience: "Führungskräfte, Jugendfeuerwehrwarte, Kinderfeuerwehrleiter/innen",
+    typicalRooms: "💻 Virtueller Seminarraum",
+    description: "Reines Online-Seminar: Sensibilisierung für Grenzverletzungen, Risikoanalysen im Feuerwehrverein, Erstellung des gesetzlich geforderten Kinderschutzkonzepts und Handlungsleitfaden bei Verdachtsfällen.",
+    highlights: ["Muster-Schutzkonzept der HKJF anwenden", "Grenzverletzungen erkennen & einschreiten", "Vertraulicher Austausch in geschützten Breakout-Rooms"],
+    specialPackItems: [
+      {
+        id: "spec-kindeswohl-headset",
+        label: "Kopfhörer / Headset (sehr empfohlen)",
+        category: "elektronik",
+        recommended: true,
+        reason: "Schützt die Privatsphäre sensibler Fallbeispiele gegenüber Mitbewohnern / Familie.",
+      },
+      {
+        id: "spec-kindeswohl-entwurf",
+        label: "Vorhandenes Schutzkonzept deiner Gemeinde (falls existent)",
+        category: "dokumente",
+        recommended: false,
+        reason: "Kann im Praxisteil direkt digital überarbeitet werden.",
+      },
+    ],
+  },
+  {
+    id: "jf-online-social-media",
+    title: "Social Media & Datenschutz kompakt für die JF (Online-Workshop)",
+    category: "medien_psychologie",
+    categoryLabel: "Medien, Prävention & PSNV",
+    duration: "1 Tag (09:30 – 16:30 Uhr digital)",
+    format: "online",
+    platform: "Microsoft Teams & Canva",
+    onlineScheduleNote: "Praxisorientierter Online-Tag mit Designübungen am Rechner",
+    clothingType: "freizeit",
+    clothingBadge: "💻 Digitaler Schreibtisch",
+    clothingBadgeColor: "blue",
+    clothingAdvice: "Bequeme Kleidung. PC/Laptop mit aktuellem Browser für Web-Tools erforderlich.",
+    targetAudience: "Pressewarte, Social-Media-Beauftragte, Jugendwarte",
+    typicalRooms: "💻 Virtueller Seminarraum & Canva Cloud",
+    description: "Reines Online-Seminar: Rechtssichere Fotos & Videos (DSGVO / KunstUrhG bei Minderjährigen), Instagram- und TikTok-Strategien zur Mitgliedergewinnung und Erstellung moderner Grafiken mit Canva.",
+    highlights: ["Rechtssicherer Umgang mit Kinderfotos", "Canva-Vorlagen für Übungsdienst-Plakate", "Social-Media-Redaktionsplan erstellen"],
+    specialPackItems: [
+      {
+        id: "spec-sm-online-canva",
+        label: "Kostenloser Canva-Account (vorab anlegen)",
+        category: "elektronik",
+        recommended: true,
+        reason: "Wird für die praktischen Grafikübungen im Seminar benötigt.",
+      },
+      {
+        id: "spec-sm-online-fotos",
+        label: "3–5 freigegebene Fotos deiner Jugendfeuerwehr auf dem Rechner",
+        category: "dokumente",
+        recommended: true,
+        reason: "Zum direkten Ausprobieren von Bildbearbeitung und Post-Designs.",
+      },
+    ],
+  },
+  {
+    id: "jf-online-kassengeschaefte",
+    title: "Kassenführung & Fördermittel für Jugendfeuerwehren (Online-Seminar)",
+    category: "leitung",
+    categoryLabel: "Leitung & Organisation",
+    duration: "1 Abend (18:30 – 21:30 Uhr)",
+    format: "online",
+    platform: "Microsoft Teams",
+    onlineScheduleNote: "Feierabend-Online-Seminar von 18:30 bis 21:30 Uhr",
+    clothingType: "freizeit",
+    clothingBadge: "💻 Bequem am Schreibtisch",
+    clothingBadgeColor: "amber",
+    clothingAdvice: "Bequeme Alltagskleidung.",
+    targetAudience: "Kassenwarte der Jugendfeuerwehr, Jugendfeuerwehrwarte, Fördervereins-Vorstände",
+    typicalRooms: "💻 Virtueller Seminarraum",
+    description: "Reines Online-Seminar: Wie wird die JF-Kasse ordnungsgemäß geführt? Zuschüsse über den Landesjugendplan beantragen, Spendenbescheinigungen, Belegführung und steuerliche Grundlagen für die Jugendkasse.",
+    highlights: ["Landesjugendplan & Fördermittel Hessen beantragen", "Ordnungsgemäße Belegführung & Kassenbuch", "Prüfungssicher durch die Kassenprüfung"],
+    specialPackItems: [
+      {
+        id: "spec-kasse-fragen",
+        label: "Eigene Fragen zur Kassenführung / Abrechnung",
+        category: "dokumente",
+        recommended: true,
+        reason: "Konkrete Fallfragen können direkt mit dem Referenten geklärt werden.",
+      },
+      {
+        id: "spec-kasse-taschenrechner",
+        label: "Taschenrechner oder Excel / Numbers am PC",
+        category: "elektronik",
+        recommended: false,
+        reason: "Für kurze Beispielrechnungen zu Zuschusssätzen.",
+      },
+    ],
+  },
+  {
+    id: "jf-online-kinderfeuerwehr-ideen",
+    title: "Kreative Gruppenstunden in der Kinderfeuerwehr (Online-Ideenwerkstatt)",
+    category: "kinderfeuerwehr",
+    categoryLabel: "Kinderfeuerwehr",
+    duration: "1 Abend (18:30 – 21:00 Uhr)",
+    format: "online",
+    platform: "BigBlueButton / Teams & Padlet",
+    onlineScheduleNote: "Interaktiver Abendworkshop mit digitalem Methodenaustausch",
+    clothingType: "freizeit",
+    clothingBadge: "💻 Kreativer Schreibtisch",
+    clothingBadgeColor: "green",
+    clothingAdvice: "Bequeme Kleidung. Halte gerne Stifte und Papier bereit.",
+    targetAudience: "Kinderfeuerwehrleiter/innen, Betreuer/innen (Kinder 6–10 Jahre)",
+    typicalRooms: "💻 Virtuelle Ideenwerkstatt",
+    description: "Reines Online-Seminar: Spielideen, Brandschutzerziehungsmaterialien und Experimente für die Kleinsten. Austausch mit Kinderfeuerwehr-Teams aus ganz Hessen über digitale Pinnwände und Live-Methoden.",
+    highlights: ["Methodenkoffer für 6–10-Jährige", "Brandschutzerziehung spielerisch gestalten", "Digitales Padlet voller Spielvorlagen zum Download"],
+    specialPackItems: [
+      {
+        id: "spec-kf-stift-papier",
+        label: "Ein paar Blatt Papier & Buntstifte am Arbeitsplatz",
+        category: "dokumente",
+        recommended: true,
+        reason: "Für eine kleine interaktive Kreativübung während des Workshops.",
+      },
+      {
+        id: "spec-kf-lieblingsspiel",
+        label: "1 Lieblingsspiel aus deiner Kinderfeuerwehr im Kopf",
+        category: "dokumente",
+        recommended: true,
+        reason: "Wird in das gemeinsame Hessen-Ideen-Padlet eingetragen.",
       },
     ],
   },

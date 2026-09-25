@@ -11,8 +11,16 @@ import {
   GraduationCap,
   ChevronDown,
   Printer,
+  Laptop,
+  CheckCircle2,
 } from "lucide-react";
-import { initialPackItems, packCategories, PackItem } from "@/data/packlistData";
+import {
+  initialPackItems,
+  initialOnlinePackItems,
+  packCategories,
+  onlinePackCategories,
+  PackItem,
+} from "@/data/packlistData";
 import { officialCourses } from "@/data/coursesData";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -36,8 +44,12 @@ export function PacklistInteractive({
     return officialCourses.find((c) => c.id === selectedCourseId) || officialCourses[0];
   }, [selectedCourseId]);
 
+  const isOnline = activeCourse.format === "online";
+
   // Combine standard pack items with course-specific special items
   const combinedPackItems = useMemo<PackItem[]>(() => {
+    const baseItems = isOnline ? initialOnlinePackItems : initialPackItems;
+
     const courseItems: PackItem[] = activeCourse.specialPackItems.map((spec) => ({
       id: spec.id,
       label: spec.label,
@@ -47,28 +59,32 @@ export function PacklistInteractive({
       courseReason: spec.reason,
     }));
 
-    return [...courseItems, ...initialPackItems];
-  }, [activeCourse]);
+    return [...courseItems, ...baseItems];
+  }, [activeCourse, isOnline]);
 
   // Load from localStorage on mount
   useEffect(() => {
     setIsMounted(true);
     try {
-      const saved = localStorage.getItem("jfaz_packlist_checked");
+      const storageKey = isOnline ? "jfaz_packlist_online_checked" : "jfaz_packlist_checked";
+      const saved = localStorage.getItem(storageKey);
       if (saved) {
         setCheckedIds(JSON.parse(saved));
+      } else {
+        setCheckedIds([]);
       }
     } catch (e) {
       console.error("Could not load packlist from localStorage", e);
     }
-  }, []);
+  }, [isOnline]);
 
   // Save to localStorage when changed
   const toggleItem = (id: string) => {
     setCheckedIds((prev) => {
       const next = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
       try {
-        localStorage.setItem("jfaz_packlist_checked", JSON.stringify(next));
+        const storageKey = isOnline ? "jfaz_packlist_online_checked" : "jfaz_packlist_checked";
+        localStorage.setItem(storageKey, JSON.stringify(next));
       } catch (e) {
         console.error("Could not save packlist to localStorage", e);
       }
@@ -80,14 +96,16 @@ export function PacklistInteractive({
     const allIds = combinedPackItems.map((item) => item.id);
     setCheckedIds(allIds);
     try {
-      localStorage.setItem("jfaz_packlist_checked", JSON.stringify(allIds));
+      const storageKey = isOnline ? "jfaz_packlist_online_checked" : "jfaz_packlist_checked";
+      localStorage.setItem(storageKey, JSON.stringify(allIds));
     } catch (e) {}
   };
 
   const handleResetAll = () => {
     setCheckedIds([]);
     try {
-      localStorage.removeItem("jfaz_packlist_checked");
+      const storageKey = isOnline ? "jfaz_packlist_online_checked" : "jfaz_packlist_checked";
+      localStorage.removeItem(storageKey);
     } catch (e) {}
   };
 
@@ -101,6 +119,8 @@ export function PacklistInteractive({
   ).length;
   const progressPercent =
     isMounted && totalItems > 0 ? Math.round((packedCount / totalItems) * 100) : 0;
+
+  const currentCategories = isOnline ? onlinePackCategories : packCategories;
 
   const filteredItems = useMemo(() => {
     if (selectedCategory === "all") {
@@ -127,51 +147,82 @@ export function PacklistInteractive({
                 Hessische Kinder- und Jugendfeuerwehr | JFAZ Marburg
               </span>
               <h1 className="text-2xl font-black text-slate-900 mt-1">
-                Offizielle Lehrgangs-Packliste
+                {isOnline ? "Offizielle Online-Seminar Checkliste" : "Offizielle Lehrgangs-Packliste"}
               </h1>
             </div>
             <div className="text-right text-[9pt] text-slate-600 space-y-0.5">
-              <p><strong>Standort:</strong> Lintzingsweg 1a, 35043 Marburg-Cappel</p>
-              <p><strong>Bettwäsche:</strong> Vor Ort vorhanden (Handtücher mitbringen)</p>
+              {isOnline ? (
+                <>
+                  <p><strong>Format:</strong> 100% Digital / Online-Seminar</p>
+                  <p><strong>Plattform:</strong> {activeCourse.platform || "Teams / BBB"}</p>
+                </>
+              ) : (
+                <>
+                  <p><strong>Standort:</strong> Lintzingsweg 1a, 35043 Marburg-Cappel</p>
+                  <p><strong>Bettwäsche:</strong> Vor Ort vorhanden (Handtücher mitbringen)</p>
+                </>
+              )}
             </div>
           </div>
 
           <div className="mt-3 p-3 bg-slate-50 rounded-lg text-[9.5pt] space-y-1.5 border border-slate-300">
             <p><strong>Ausgewählter Lehrgang:</strong> {activeCourse.title} ({activeCourse.duration})</p>
-            <p><strong>Dresscode / Kleidungsempfehlung:</strong> {activeCourse.clothingBadge} — {activeCourse.clothingAdvice}</p>
+            <p><strong>Empfehlung:</strong> {activeCourse.clothingBadge} — {activeCourse.clothingAdvice}</p>
             <div className="pt-2 flex gap-8 border-t border-slate-200">
               <span><strong>Name:</strong> ____________________________________</span>
-              <span><strong>Zimmer-Nr.:</strong> __________</span>
-              <span><strong>Anreisetag:</strong> ______________</span>
+              <span><strong>Heimatfeuerwehr:</strong> ________________________</span>
+              <span><strong>Datum:</strong> ______________</span>
             </div>
           </div>
         </div>
 
         {/* Screen Header */}
         <div className="text-center max-w-3xl mx-auto mb-8 print:hidden">
-          <Badge variant="green" className="mb-3">
-            Interaktive Checkliste
-          </Badge>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-hkjf-navy tracking-tight">
-            Deine personalisierte JFAZ-Packliste
-          </h2>
-          <p className="mt-3 text-sm sm:text-base text-slate-600">
-            Nichts mehr zuhause vergessen! Hake deine Sachen direkt auf dem Smartphone oder Laptop
-            ab oder drucke dir deine Kofferliste mit 1-Klick aus.
-          </p>
+          {isOnline ? (
+            <>
+              <Badge className="mb-3 bg-indigo-100 text-indigo-700 border-indigo-200 font-extrabold flex items-center gap-1.5 mx-auto w-fit">
+                <Laptop className="w-3.5 h-3.5" />
+                <span>Schreibtisch- &amp; Technik-Checkliste</span>
+              </Badge>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-hkjf-navy tracking-tight">
+                Deine digitale Checkliste fürs Online-Seminar
+              </h2>
+              <p className="mt-3 text-sm sm:text-base text-slate-600">
+                Kofferpacken entfällt! Hake hier deine Hardware, Headset, Zugangsdaten und Notizen ab, damit am Seminartag alles reibungslos läuft.
+              </p>
+            </>
+          ) : (
+            <>
+              <Badge variant="green" className="mb-3">
+                Interaktive Checkliste
+              </Badge>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-hkjf-navy tracking-tight">
+                Deine personalisierte JFAZ-Packliste
+              </h2>
+              <p className="mt-3 text-sm sm:text-base text-slate-600">
+                Nichts mehr zuhause vergessen! Hake deine Sachen direkt auf dem Smartphone oder Laptop
+                ab oder drucke dir deine Kofferliste mit 1-Klick aus.
+              </p>
+            </>
+          )}
         </div>
 
         {/* Course-Personalized Banner */}
-        <div className="max-w-3xl mx-auto mb-8 bg-gradient-to-br from-hkjf-navy via-hkjf-navyDark to-[#18203d] rounded-2xl p-5 sm:p-6 text-white shadow-xl border border-blue-900/50 space-y-4 print:hidden">
-          
+        <div
+          className={`max-w-3xl mx-auto mb-8 rounded-2xl p-5 sm:p-6 text-white shadow-xl space-y-4 print:hidden ${
+            isOnline
+              ? "bg-gradient-to-br from-slate-900 via-indigo-950 to-hkjf-navy border border-indigo-500/30"
+              : "bg-gradient-to-br from-hkjf-navy via-hkjf-navyDark to-[#18203d] border border-blue-900/50"
+          }`}
+        >
           {/* Top Row: Context Badge & Course Switcher */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
             <div className="flex items-center gap-2">
               <div className="p-1.5 rounded-lg bg-amber-400/20 text-amber-300">
-                <GraduationCap className="w-4 h-4" />
+                {isOnline ? <Laptop className="w-4 h-4" /> : <GraduationCap className="w-4 h-4" />}
               </div>
               <span className="text-xs font-bold uppercase tracking-wider text-blue-200">
-                Lehrgangsspezifische Packliste
+                {isOnline ? "Online-Seminar Checkliste" : "Lehrgangsspezifische Packliste"}
               </span>
               <span className="text-[11px] font-semibold bg-white/10 px-2 py-0.5 rounded-full text-slate-200">
                 {activeCourse.duration}
@@ -192,6 +243,7 @@ export function PacklistInteractive({
                 >
                   {officialCourses.map((c) => (
                     <option key={c.id} value={c.id}>
+                      {c.format === "online" ? "💻 " : "🏫 "}
                       {c.title}
                     </option>
                   ))}
@@ -211,12 +263,12 @@ export function PacklistInteractive({
           {/* Clothing & Special Info Box */}
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3.5 sm:p-4 flex items-start gap-3.5 text-xs text-slate-100 border border-white/15">
             <div className="p-2 rounded-lg bg-amber-400/20 text-amber-300 shrink-0 mt-0.5">
-              <Shirt className="w-4 h-4" />
+              {isOnline ? <Laptop className="w-4 h-4" /> : <Shirt className="w-4 h-4" />}
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-bold text-amber-200 uppercase text-[11px] tracking-wide">
-                  Dresscode:
+                  {isOnline ? "Arbeitsplatz & Kamera:" : "Dresscode:"}
                 </span>
                 <span className="font-bold text-xs bg-white/20 text-white px-2 py-0.5 rounded-md">
                   {activeCourse.clothingBadge}
@@ -239,12 +291,12 @@ export function PacklistInteractive({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-3">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Pack-Fortschritt
+                {isOnline ? "Vorbereitungs-Fortschritt" : "Pack-Fortschritt"}
               </span>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-2xl font-black text-hkjf-navy">{progressPercent}%</span>
                 <span className="text-xs font-semibold text-slate-600">
-                  ({packedCount} von {totalItems} Gegenständen eingepackt)
+                  ({packedCount} von {totalItems} Punkten erledigt)
                 </span>
               </div>
             </div>
@@ -254,8 +306,8 @@ export function PacklistInteractive({
                 variant="outline"
                 size="sm"
                 onClick={handlePrint}
-                className="text-xs font-bold gap-1.5 bg-white text-slate-700 hover:bg-slate-100 hover:text-hkjf-navy shadow-xs border-slate-300"
-                title="Packliste für den Koffer als PDF speichern oder drucken"
+                className="text-xs font-bold gap-1.5 bg-white text-slate-700 hover:bg-slate-100 hover:text-hkjf-navy shadow-xs border-slate-300 cursor-pointer"
+                title="Liste als PDF speichern oder drucken"
               >
                 <Printer className="w-3.5 h-3.5 text-hkjf-red" />
                 <span>Drucken / PDF</span>
@@ -264,7 +316,7 @@ export function PacklistInteractive({
                 variant="outline"
                 size="sm"
                 onClick={handleCheckAll}
-                className="text-xs font-bold gap-1 bg-white hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 shadow-xs"
+                className="text-xs font-bold gap-1 bg-white hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 shadow-xs cursor-pointer"
               >
                 <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Alle</span>
@@ -273,7 +325,7 @@ export function PacklistInteractive({
                 variant="ghost"
                 size="sm"
                 onClick={handleResetAll}
-                className="text-xs text-slate-500 hover:text-hkjf-red gap-1"
+                className="text-xs text-slate-500 hover:text-hkjf-red gap-1 cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Reset</span>
@@ -287,8 +339,9 @@ export function PacklistInteractive({
             <div className="mt-4 p-3 bg-emerald-100/80 border border-emerald-300 rounded-xl flex items-center gap-2.5 text-emerald-900 text-xs font-bold animate-in fade-in-50 duration-300">
               <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
               <span>
-                Perfekt! Deine Tasche ist vollständig gepackt für &quot;{activeCourse.title}&quot;.
-                Gute Anreise nach Marburg-Cappel!
+                {isOnline
+                  ? `Perfekt! Dein digitaler Arbeitsplatz ist vollständig startklar für "${activeCourse.title}". Gutes Gelingen im Seminar!`
+                  : `Perfekt! Deine Tasche ist vollständig gepackt für "${activeCourse.title}". Gute Anreise nach Marburg-Cappel!`}
               </span>
             </div>
           )}
@@ -296,33 +349,31 @@ export function PacklistInteractive({
 
         {/* Category Filters (Screen Only) */}
         <div className="flex flex-wrap justify-center gap-2 mb-8 print:hidden">
-          {packCategories.map((cat) => {
-            // Count items in this category
-            const count =
-              cat.id === "all"
-                ? combinedPackItems.length
-                : cat.id === "lehrgang"
-                ? combinedPackItems.filter((i) => i.isCourseSpecific).length
-                : combinedPackItems.filter((i) => i.category === cat.id).length;
+          {currentCategories.map((cat) => {
+            let count = 0;
+            if (cat.id === "all") count = combinedPackItems.length;
+            else if (cat.id === "lehrgang")
+              count = combinedPackItems.filter((i) => i.isCourseSpecific).length;
+            else count = combinedPackItems.filter((i) => i.category === cat.id).length;
 
             if (cat.id === "lehrgang" && count === 0) return null;
+
+            const isSelected = selectedCategory === cat.id;
 
             return (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all border flex items-center gap-1.5 ${
-                  selectedCategory === cat.id
-                    ? "bg-hkjf-navy text-white border-hkjf-navy shadow-sm"
-                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border flex items-center gap-1.5 cursor-pointer ${
+                  isSelected
+                    ? "bg-hkjf-navy text-white border-hkjf-navy shadow-sm scale-105"
+                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
                 }`}
               >
                 <span>{cat.label}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                    selectedCategory === cat.id
-                      ? "bg-white/20 text-white"
-                      : "bg-slate-100 text-slate-600"
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                    isSelected ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
                   }`}
                 >
                   {count}
@@ -332,76 +383,67 @@ export function PacklistInteractive({
           })}
         </div>
 
-        {/* Items Grid (Responsive Screen & Clean 2-Column Print) */}
-        <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 print:grid-cols-2 print:gap-2 print:max-w-none">
+        {/* Packlist Items Grid / Checkboxes */}
+        <div className="max-w-3xl mx-auto space-y-2.5">
           {filteredItems.map((item) => {
-            const isChecked = isMounted && checkedIds.includes(item.id);
+            const isChecked = checkedIds.includes(item.id);
 
             return (
               <div
                 key={item.id}
                 onClick={() => toggleItem(item.id)}
-                className={`p-4 rounded-xl border-2 transition-all duration-150 cursor-pointer flex items-start gap-3 select-none print:p-2 print:border print:border-slate-300 print:rounded-md print:bg-white print:break-inside-avoid ${
+                className={`p-3.5 sm:p-4 rounded-xl border-2 transition-all flex items-start justify-between gap-3 cursor-pointer group select-none ${
                   isChecked
-                    ? "bg-emerald-50/50 border-emerald-400/80 text-slate-500"
+                    ? "bg-slate-50 border-slate-200 opacity-60 print:opacity-100"
                     : item.isCourseSpecific
-                    ? "bg-amber-50/40 border-amber-300 hover:border-amber-400 hover:shadow-sm"
-                    : "bg-white border-slate-200 hover:border-hkjf-red/60 hover:shadow-sm"
+                    ? "bg-amber-50/50 border-amber-200 hover:border-amber-400"
+                    : "bg-white border-slate-200 hover:border-slate-300 shadow-2xs"
                 }`}
               >
-                <div className="mt-0.5 shrink-0">
-                  {isChecked ? (
-                    <div className="w-5 h-5 rounded-md bg-emerald-600 text-white flex items-center justify-center print:border print:border-slate-800 print:bg-white print:text-black">
-                      <Check className="w-3.5 h-3.5 stroke-[3] print:stroke-black" />
-                    </div>
-                  ) : (
-                    <div
-                      className={`w-5 h-5 rounded-md border-2 bg-white print:border-slate-800 ${
-                        item.isCourseSpecific ? "border-amber-400" : "border-slate-300"
-                      }`}
-                    />
-                  )}
-                </div>
-
-                <div className="flex-grow text-xs sm:text-sm print:text-[9.5pt]">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span
-                      className={`font-semibold ${
-                        isChecked ? "line-through text-slate-400 print:no-underline print:text-black" : "text-hkjf-navy print:text-black"
-                      }`}
-                    >
-                      {item.label}
-                    </span>
-                    {item.isCourseSpecific && (
-                      <span className="text-[9px] uppercase font-black text-amber-900 bg-amber-200/80 px-1.5 py-0.5 rounded print:border print:border-slate-400 print:bg-slate-100 print:text-slate-800">
-                        Sonderbedarf
-                      </span>
-                    )}
-                    {item.recommended && !isChecked && (
-                      <span className="text-[9px] uppercase font-black text-hkjf-red bg-red-100 px-1.5 py-0.5 rounded print:border print:border-slate-400 print:bg-slate-100 print:text-slate-800">
-                        Wichtig
-                      </span>
-                    )}
+                <div className="flex items-start gap-3 min-w-0">
+                  <div
+                    className={`w-5 h-5 rounded-md border-2 mt-0.5 flex items-center justify-center shrink-0 transition-colors ${
+                      isChecked
+                        ? "bg-emerald-600 border-emerald-600 text-white"
+                        : "border-slate-300 bg-white group-hover:border-slate-400"
+                    }`}
+                  >
+                    {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                   </div>
 
-                  {item.courseReason && (
-                    <p
-                      className={`text-[11px] mt-1 leading-snug print:text-[8.5pt] ${
-                        isChecked ? "text-slate-400 print:text-slate-600" : "text-amber-800/80 print:text-slate-600"
-                      }`}
-                    >
-                      💡 {item.courseReason}
-                    </p>
-                  )}
+                  <div className="space-y-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span
+                        className={`text-xs sm:text-sm font-semibold transition-colors ${
+                          isChecked ? "line-through text-slate-400 font-normal" : "text-slate-800"
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+
+                      {item.isCourseSpecific && (
+                        <span className="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded-md">
+                          🎯 Nur für diesen Kurs
+                        </span>
+                      )}
+
+                      {item.recommended && !item.isCourseSpecific && (
+                        <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded-md">
+                          Empfohlen
+                        </span>
+                      )}
+                    </div>
+
+                    {item.courseReason && (
+                      <p className="text-[11px] text-amber-800/90 leading-relaxed font-medium">
+                        💡 Grund: {item.courseReason}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             );
           })}
-        </div>
-
-        {/* Dedicated Print-Only Footer */}
-        <div className="hidden print:block mt-6 pt-3 border-t border-slate-300 text-center text-[8.5pt] text-slate-500">
-          <p>Hessische Kinder- und Jugendfeuerwehr | Bildungsstätte JFAZ Marburg | www.hkjf.de</p>
         </div>
 
       </div>
