@@ -55,9 +55,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.webmanifest" />
       </head>
       <body className="min-h-screen flex flex-col bg-hkjf-cream text-hkjf-text antialiased selection:bg-hkjf-red selection:text-white">
-        <div className="print:hidden">
-          <Navbar />
-        </div>
+        <Navbar />
         <main className="flex-grow">{children}</main>
         <div className="print:hidden">
           <Footer />

@@ -1,3 +1,12 @@
+// Schematic overview only – positions are illustrative, not to scale.
+// Facts are taken from hlfs.hessen.de/standort-marburg and hkjf.de (as of 10/2026).
+// Anything not published there is deliberately left out; the official site plan is OFFICIAL_SITE_PLAN_URL.
+
+export const OFFICIAL_SITE_PLAN_URL =
+  "https://hlfs.hessen.de/sites/hlfs.hessen.de/files/2024-04/hlfs_marburg_lageplan_2024_neueeinfahrt.pdf";
+
+export const HLFS_MARBURG_INFO_URL = "https://hlfs.hessen.de/standort-marburg";
+
 export interface CampusBuilding {
   id: string;
   name: string;
@@ -12,174 +21,105 @@ export interface CampusBuilding {
     height: number;
   };
   entrance: string;
-  floors: {
-    level: string;
-    description: string;
-  }[];
-  roomNumbers?: string;
-  accessibility: {
-    hasElevator: boolean;
-    hasRamp: boolean;
-    accessibleWc: boolean;
-    notes: string;
-  };
+  details: string[];
   accessHours: string;
   tips: string;
 }
 
 export const campusBuildings: CampusBuilding[] = [
   {
-    id: "hauptgebaeude",
-    name: "Hauptgebäude & Pforte",
-    tagline: "Erstanlaufstelle, Schlüsselabholung & Information",
+    id: "verwaltung",
+    name: "Verwaltung & Anmeldung",
+    tagline: "Erste Anlaufstelle am Anreisetag",
     category: "verwaltung",
     badgeColor: "red",
     iconName: "Shield",
     coordinates: { x: 380, y: 180, width: 220, height: 140 },
-    entrance: "Haupteingang direkt am Vorplatz (Cappeler Str. / Lintzingsweg Zufahrt).",
-    floors: [
-      { level: "EG", description: "Zentrale Pforte / Rezeption, digitales Foyer-Infosystem, Postfächer, Verwaltungsbüros" },
-      { level: "1. OG", description: "Lehrgangsleitung, Dozentenzimmer, Besprechungsräume" },
+    entrance: "Den Weg zur Anmeldung findest du vor Ort ausgeschildert bzw. im offiziellen Lageplan.",
+    details: [
+      "Anmeldung am Anreisetag (unter der Woche) in der Regel 08:30 – 09:15 Uhr, bei Wochenendlehrgängen freitags 17:00 – 17:45 Uhr.",
+      "Hier erhältst du deinen Transponder für Zimmer, Seiteneingänge und Zufahrtstor.",
     ],
-    accessibility: {
-      hasElevator: true,
-      hasRamp: true,
-      accessibleWc: true,
-      notes: "Ebenerdiger Haupteingang mit automatischer Schiebetür und Aufzug zu allen Ebenen.",
-    },
-    accessHours: "Pforte zu den Anreisezeiten durchgehend besetzt (sonntags bis 22:00 Uhr, danach Notfall-Schlüsselsafe).",
-    tips: "Hier holst du als Erstes deine Zimmerkarte ab und siehst auf dem Monitor deinen zugewiesenen Lehrsaal.",
+    accessHours: "Außenstelle erreichbar Mo 07:00 – 16:30 Uhr, Di – Fr 07:00 – 16:15 Uhr (06421 389 0311). Außerhalb dieser Zeiten wird zum Hausmeister weitergeleitet.",
+    tips: "Abweichende Zeiten stehen immer in deiner Einberufung – die geht vor.",
   },
   {
-    id: "lehrsaaltrakt",
-    name: "Lehrsaaltrakt & Seminarräume",
-    tagline: "Moderne Unterrichts- und Gruppenarbeitsräume",
+    id: "lehrsaele",
+    name: "Lehrsäle & Gruppenräume",
+    tagline: "Unterricht und Gruppenarbeit",
     category: "unterricht",
     badgeColor: "blue",
     iconName: "BookOpen",
     coordinates: { x: 630, y: 150, width: 260, height: 160 },
-    entrance: "Direkter Übergang vom Foyer des Hauptgebäudes oder über den Innenhof.",
-    floors: [
-      { level: "EG", description: "Großer Plenarsaal 'Marburg' (bis 120 Personen), Kaffeebar & Wasserspender" },
-      { level: "1. OG", description: "Seminarräume 'Lahn', 'Elisabeth', 'Kassel' & 4 Gruppenarbeitsräume" },
-      { level: "2. OG", description: "Medienwerkstatt & PC-Schulungsraum" },
+    entrance: "Welchen Raum dein Lehrgang nutzt, erfährst du bei der Anmeldung bzw. von der Lehrgangsleitung.",
+    details: [
+      "Unterrichtsbeginn am Anreisetag in der Regel 09:40 Uhr.",
+      "Unterricht endet täglich in der Regel um 15:55 Uhr, am Abreisetag spätestens 14:30 Uhr.",
     ],
-    accessibility: {
-      hasElevator: true,
-      hasRamp: true,
-      accessibleWc: true,
-      notes: "Vollständig barrierefrei mit Aufzug und induktiver Höranlage im Plenarsaal.",
-    },
-    accessHours: "Während der Unterrichtszeiten (07:30 – 21:00 Uhr) geöffnet.",
-    tips: "Vor den Seminarräumen stehen kostenlose Wasserspender bereit – nimm gerne eine wiederverwendbare Trinkflasche mit!",
+    accessHours: "Während der Unterrichtszeiten deines Lehrgangs.",
+    tips: "Eine eigene Trinkflasche und Schreibzeug sind im Unterricht praktisch.",
   },
   {
-    id: "gaestehaus",
-    name: "Gästehaus & Unterkünfte",
-    tagline: "Zimmer 101–230, Wohlfühlbereich & Ruhezonen",
+    id: "unterkunft",
+    name: "Unterkunft",
+    tagline: "Einzelzimmer mit eigener Nasszelle",
     category: "wohnen",
     badgeColor: "green",
     iconName: "Bed",
     coordinates: { x: 120, y: 160, width: 230, height: 210 },
-    entrance: "Zugang über den Innenhof oder wettergeschützten Verbindungsgang im EG.",
-    floors: [
-      { level: "EG", description: "Zimmer 101–115 (u. a. barrierefreie Einzelzimmer), Teeküche, Waschraum" },
-      { level: "1. OG", description: "Zimmer 116–140 (Einzel- & Zweibettzimmer), Aufenthaltsbereich mit TV" },
-      { level: "2. OG", description: "Zimmer 201–230 (Zweibettzimmer mit eigenem Bad/Dusche)" },
+    entrance: "Zugang mit deinem Transponder (öffnet Zimmer und Seiteneingänge).",
+    details: [
+      "Einzelzimmer mit integrierter Nasszelle, Bett, Kleiderschrank, Arbeitstisch und Stühlen.",
+      "Bettwäsche wird gestellt. Am Abreisetag bitte das Bett abziehen.",
     ],
-    roomNumbers: "Zimmer 101–140 (EG/1. OG) und 201–230 (2. OG)",
-    accessibility: {
-      hasElevator: true,
-      hasRamp: true,
-      accessibleWc: true,
-      notes: "Barrierefreie Zimmer im EG mit rollstuhlgerechter Dusche und Haltegriffen.",
-    },
-    accessHours: "24h Zugang mit deiner persönlichen Zimmerkarte (Keycard).",
-    tips: "Bettwäsche ist bezogen! Bitte vergiss dein Duschhandtuch und persönliche Pflegeartikel nicht.",
+    accessHours: "Transponder am Abreisetag bis 14:00 Uhr zurückgeben.",
+    tips: "Handtücher sind nicht als gestellt angegeben – bring sicherheitshalber eigene mit.",
   },
   {
-    id: "mensa",
-    name: "Mensa & Speisesaal",
-    tagline: "Frühstück, warmes Mittagessen & Abendbrot",
+    id: "speisesaal",
+    name: "Speisesaal",
+    tagline: "Frühstück, Mittag- und Abendessen",
     category: "verpflegung",
     badgeColor: "amber",
     iconName: "Utensils",
     coordinates: { x: 420, y: 360, width: 240, height: 130 },
-    entrance: "Haupteingang über die Terrasse oder über den zentralen Campusflur.",
-    floors: [
-      { level: "EG", description: "Speisesaal, Speisenausgabe, Salatbar, Getränkestation und Außenterrasse" },
+    entrance: "Der Speisesaal ist vor Ort ausgeschildert.",
+    details: [
+      "Frühstück 06:40 – 07:30 Uhr (montags 09:00 – 09:30 Uhr)",
+      "Kaffeepause 09:20 – 09:40 Uhr",
+      "Mittagessen 12:15 – 12:50 Uhr",
+      "Abendessen 16:15 – 17:45 Uhr (freitags 17:00 – 17:45 Uhr)",
     ],
-    accessibility: {
-      hasElevator: false,
-      hasRamp: true,
-      accessibleWc: true,
-      notes: "Komplett ebenerdig zugänglich mit breiten Gängen an der Essensausgabe.",
-    },
-    accessHours: "Frühstück 07:00–08:00 | Mittagessen 12:00–13:00 | Abendessen 18:00–19:00 Uhr.",
-    tips: "Vegetarische Alternativen gibt es zu jeder Mahlzeit ohne Voranmeldung.",
-  },
-  {
-    id: "freizeit",
-    name: "Bistro & TV-Lounge",
-    tagline: "Kameradschaft, Kicker, Billard & TV-Abende",
-    category: "freizeit",
-    badgeColor: "purple",
-    iconName: "Smile",
-    coordinates: { x: 690, y: 340, width: 200, height: 130 },
-    entrance: "Im Untergeschoss/EG des Gästehaustraktes mit Ausgang zum Grillplatz.",
-    floors: [
-      { level: "EG", description: "Bistro, Tischkicker, Billardtisch, TV-Ecke, Snack- und Kaltgetränkeautomaten" },
-    ],
-    accessibility: {
-      hasElevator: true,
-      hasRamp: true,
-      accessibleWc: true,
-      notes: "Über den Aufzug im Gästehaus schwellenlos erreichbar.",
-    },
-    accessHours: "Geöffnet bis 23:00 Uhr (ab 22:00 Uhr Zimmerlautstärke / Nachtruhe beachten).",
-    tips: "Perfekt, um nach dem Unterricht mit Lehrgangskollegen aus ganz Hessen ins Gespräch zu kommen.",
+    accessHours: "Zeiten laut HLFS – maßgeblich ist der Plan vor Ort bzw. deine Einberufung.",
+    tips: "Wünsche wie vegetarische Kost am Anmeldungstag in der Küche melden.",
   },
   {
     id: "parkplatz",
-    name: "Parkplätze P1 & P2 (Schranke)",
-    tagline: "Kostenfreie Stellplätze für PKW & Feuerwehr-MTW",
+    name: "Zufahrt & Parken",
+    tagline: "Einfahrt aktuell über die Umgehungsstraße",
     category: "parken",
     badgeColor: "slate",
     iconName: "Car",
     coordinates: { x: 380, y: 30, width: 340, height: 90 },
-    entrance: "Zufahrt über Lintzingsweg 1a (Schrankenanlage öffnet tagsüber automatisch).",
-    floors: [
-      { level: "P1", description: "Hauptparkplatz für Teilnehmer-PKW direkt vor dem Hauptgebäude" },
-      { level: "P2", description: "Ausgewiesene Stellflächen für Feuerwehr-Mannschaftstransportwagen (MTW) und E-Ladesäulen" },
+    entrance: "Wegen Bauarbeiten erfolgt die Einfahrt aufs Gelände über die Umgehungsstraße – bitte der Beschilderung folgen.",
+    details: [
+      "Das Zufahrtstor öffnet mit deinem Transponder.",
+      "Wo du parken kannst, zeigt der offizielle Lageplan bzw. die Beschilderung vor Ort.",
     ],
-    accessibility: {
-      hasElevator: false,
-      hasRamp: true,
-      accessibleWc: false,
-      notes: "Ebenerdige Asphaltflächen mit markierten Behindertenparkplätzen direkt vor der Pforte.",
-    },
-    accessHours: "Rund um die Uhr befahrbar.",
-    tips: "Bitte parke platzsparend, damit auch größere Feuerwehrfahrzeuge problemlos rangieren können.",
+    accessHours: "Plane wegen der geänderten Zufahrt etwas mehr Zeit ein.",
+    tips: "Den aktuellen Lageplan mit der neuen Einfahrt findest du als PDF auf hlfs.hessen.de.",
   },
   {
     id: "zeltplatz",
-    name: "Zeltplatzgelände & Wiese",
-    tagline: "Großveranstaltungen, Zeltlager & Lagerfeuerplatz",
+    name: "Zeltplatzgelände",
+    tagline: "Gelände der HKJF für Zeltlager",
     category: "freizeit",
     badgeColor: "green",
     iconName: "Tent",
     coordinates: { x: 920, y: 170, width: 170, height: 260 },
-    entrance: "Hinter dem Lehrsaaltrakt über den Verbindungsweg.",
-    floors: [
-      { level: "Gelände", description: "Große Zeltwiese, feste Sanitärstation, überdachte Grillpavillons, Sportfeld" },
-    ],
-    accessibility: {
-      hasElevator: false,
-      hasRamp: true,
-      accessibleWc: true,
-      notes: "Feste Wege vorhanden, Rasenfläche bei Trockenheit befahrbar.",
-    },
-    accessHours: "Für Zeltlagergruppen nach Absprache nutzbar.",
-    tips: "Im Sommer Treffpunkt für gemütliche Abende am Lagerfeuer.",
+    entrance: "Infos zum Gelände und zur Buchung gibt es auf hkjf.de unter „Zeltplatzgelände“.",
+    details: [],
+    accessHours: "Nutzung nach Absprache mit der HKJF.",
+    tips: "Für Lehrgangsteilnehmende in der Regel nicht relevant.",
   },
 ];

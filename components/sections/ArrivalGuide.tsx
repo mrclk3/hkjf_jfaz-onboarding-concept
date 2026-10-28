@@ -23,6 +23,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { OFFICIAL_SITE_PLAN_URL } from "@/data/campusMapData";
 
 interface ArrivalGuideProps {
   isOnline?: boolean;
@@ -56,17 +57,17 @@ export function ArrivalGuide({
     {
       num: 1,
       title: "Einladung & Meeting-Link",
-      subtitle: "Zugangsdaten 3–5 Tage vorab",
+      subtitle: "Zugangsdaten per E-Mail",
       icon: Mail,
       content: (
         <div className="space-y-2.5 text-xs sm:text-sm text-slate-600">
           <p>
-            Der Einwahllink für deine Online-Schulung wird ca. <strong>3 bis 5 Tage vor Beginn</strong> an deine bei der Anmeldung angegebene E-Mail-Adresse verschickt.
+            Den Einwahllink erhältst du <strong>vor Beginn per E-Mail</strong> an die Adresse, die du bei der Anmeldung angegeben hast. Wann genau, steht in deiner Einberufung.
           </p>
           <div className="bg-indigo-50/80 border border-indigo-200/80 p-2.5 rounded-xl text-indigo-900 text-xs flex items-start gap-2">
             <Mail className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
             <div>
-              <strong>Spam-Ordner checken:</strong> Solltest du bis 48h vor dem Termin keinen Link erhalten haben, melde dich kurz bei der Bildungsstätte.
+              <strong>Spam-Ordner checken:</strong> Hast du kurz vor dem Termin noch keinen Link, melde dich bei der HKJF (06421 / 968 789 0, info@hkjf.de).
             </div>
           </div>
         </div>
@@ -80,7 +81,7 @@ export function ArrivalGuide({
       content: (
         <div className="space-y-2.5 text-xs sm:text-sm text-slate-600">
           <p>
-            Für anerkannte Seminare ist eine <strong>Webcam</strong> und ein <strong>Headset</strong> (verhindert Rückkopplung) zwingend erforderlich.
+            Ein <strong>Headset</strong> (verhindert Rückkopplungen) und eine <strong>Webcam</strong> sind sehr empfehlenswert. Ob die Kamera an sein muss, steht in deiner Einladung.
           </p>
           <div className="pt-1">
             <Button
@@ -111,16 +112,16 @@ export function ArrivalGuide({
     },
     {
       num: 3,
-      title: "Virtueller Check-in (15 Min. vor Beginn)",
-      subtitle: "Namensformat & Warteraum",
+      title: "Virtueller Check-in",
+      subtitle: "Etwas früher einwählen",
       icon: Clock,
       content: (
         <div className="space-y-2.5 text-xs sm:text-sm text-slate-600">
           <p>
-            Der virtuelle Seminarraum öffnet <strong>15 Minuten vor Beginn</strong>. Nutze die Zeit für den Ton- und Videotest.
+            Wähl dich am besten <strong>10–15 Minuten vor Beginn</strong> ein, dann bleibt Zeit für den Ton- und Videotest.
           </p>
           <div className="bg-amber-50 border border-amber-200/80 p-2.5 rounded-xl text-amber-900 text-xs">
-            <strong>Wichtig fürs Teilnahmezertifikat:</strong> Trage dich beim Beitreten mit vollem Namen ein (z. B. <em>&quot;Max Mustermann – JF Kassel&quot;</em>).
+            <strong>Wichtig für die Anwesenheit:</strong> Trage dich beim Beitreten mit vollem Namen und Feuerwehr ein (z. B. <em>&quot;Max Mustermann – JF Kassel&quot;</em>).
           </div>
         </div>
       ),
@@ -136,7 +137,7 @@ export function ArrivalGuide({
             Schließe die Zimmertür und informiere Familie/Mitbewohner über deinen Lehrgang.
           </p>
           <p>
-            Stelle dir eine große Flasche Wasser, Kaffee/Tee sowie Schreibzeug und deine Florix-Notizen griffbereit an deinen Schreibtisch.
+            Stelle dir etwas zu trinken und Schreibzeug griffbereit an deinen Schreibtisch.
           </p>
         </div>
       ),
@@ -147,13 +148,13 @@ export function ArrivalGuide({
     {
       num: 1,
       title: "Navigation & Anfahrt",
-      subtitle: "Navi-Ziel: Lintzingsweg 1a, 35043 Marburg-Cappel",
+      subtitle: "Lintzingsweg 1a, 35043 Marburg-Cappel",
       icon: Navigation,
       content: (
         <div className="space-y-3 text-xs sm:text-sm text-slate-600">
           <p>
-            Gib in dein Navi <strong>Lintzingsweg 1a, 35043 Marburg-Cappel</strong> ein.
-            Die Zufahrt zum JFAZ-Campus ist vor Ort gut ausgeschildert.
+            Das KJFAZ liegt auf dem Gelände der <strong>HLFS-Außenstelle Marburg-Cappel</strong>, Lintzingsweg 1a, 35043 Marburg.
+            Über die B 3 nimmst du die Ausfahrt Marburg-Süd.
           </p>
           <div className="flex flex-wrap gap-2 pt-1">
             <Button
@@ -171,40 +172,56 @@ export function ArrivalGuide({
                 <ExternalLink className="w-3 h-3 ml-0.5" />
               </a>
             </Button>
+            <Button asChild size="sm" variant="outline" className="font-bold gap-1.5">
+              <a
+                href="https://hlfs.hessen.de/standort-marburg/informationen/anreise-marburg"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>Anfahrtsbeschreibung</span>
+                <ExternalLink className="w-3 h-3 ml-0.5" />
+              </a>
+            </Button>
           </div>
         </div>
       ),
     },
     {
       num: 2,
-      title: "Schrankenanlage & Parkplatz",
-      subtitle: "Kostenfreies Parken für Lehrgangsgäste",
+      title: "Einfahrt & Parken",
+      subtitle: "Aktuell über die Umgehungsstraße",
       icon: Car,
       content: (
-        <div className="space-y-2 text-xs sm:text-sm text-slate-600">
+        <div className="space-y-2.5 text-xs sm:text-sm text-slate-600">
           <p>
-            Fahre bis vor die Schranke an der Einfahrt. Die Schranke öffnet sich tagsüber automatisch oder per Gegensprechanlage.
+            Wegen Bauarbeiten erfolgt die <strong>Einfahrt aufs Gelände über die Umgehungsstraße</strong>. Folge der Beschilderung und plane etwas mehr Zeit ein.
           </p>
-          <p>
-            Dahinter stehen dir <strong>kostenfreie Parkplätze</strong> direkt auf dem Campusgelände zur Verfügung. Bitte parke platzsparend auf den markierten PKW- bzw. MTW-Flächen.
-          </p>
+          <a
+            href={OFFICIAL_SITE_PLAN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs font-bold text-hkjf-navy hover:text-hkjf-red"
+          >
+            <ExternalLink className="w-3 h-3" />
+            <span>Lageplan mit neuer Einfahrt (PDF)</span>
+          </a>
         </div>
       ),
     },
     {
       num: 3,
-      title: "Pforte & Zimmerschlüssel",
-      subtitle: "Check-in & Begrüßung",
+      title: "Anmeldung & Transponder",
+      subtitle: "Check-in am Anreisetag",
       icon: Key,
       content: (
         <div className="space-y-2.5 text-xs sm:text-sm text-slate-600">
           <p>
-            Gehe direkt ins Hauptgebäude zur <strong>Pforte / Rezeption</strong>. Dort nennst du deinen Namen und deinen Lehrgang.
+            Bei der Anmeldung erhältst du deinen <strong>Transponder</strong>. Er öffnet dein Zimmer, die Seiteneingänge und das Zufahrtstor.
           </p>
           <div className="bg-amber-50 border border-amber-200/80 p-3 rounded-xl flex items-start gap-2.5 text-amber-900 text-xs">
             <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <div>
-              <strong>Spätanreise (z. B. Sonntagabend):</strong> Die Pforte ist besetzt. Du erhältst deine Zimmerkarte und den Gebäudeplan auch außerhalb der normalen Bürozeiten.
+              <strong>Anmeldezeiten:</strong> unter der Woche in der Regel 08:30 – 09:15 Uhr, bei Wochenendlehrgängen freitags 17:00 – 17:45 Uhr. Abweichende Zeiten stehen in deiner Einberufung.
             </div>
           </div>
         </div>
@@ -212,16 +229,16 @@ export function ArrivalGuide({
     },
     {
       num: 4,
-      title: "Zimmer beziehen & Foyer-Info",
-      subtitle: "Einrichten & Infowand checken",
+      title: "Zimmer beziehen",
+      subtitle: "Einzelzimmer mit Nasszelle",
       icon: Home,
       content: (
         <div className="space-y-2 text-xs sm:text-sm text-slate-600">
           <p>
-            Die Zimmerkarte schließt dein Zimmer sowie die Außentüren auf.
+            Bettwäsche wird gestellt, Handtücher bringst du selbst mit.
           </p>
           <p>
-            Im Zimmer ist das Bett bereits frisch mit Bettwäsche bezogen. Wirf einen Blick auf die digitale Infotafel im Foyer: Hier siehst du deinen Lehrsaal und den Beginn der ersten Einheit!
+            Am Abreisetag ziehst du das Bett ab und gibst den Transponder <strong>bis 14:00 Uhr</strong> zurück.
           </p>
         </div>
       ),
@@ -231,7 +248,7 @@ export function ArrivalGuide({
   const activeSteps = isOnline ? onlineSteps : physicalSteps;
 
   return (
-    <section id="anreise" className="py-16 sm:py-20 bg-white border-b border-border/70 scroll-mt-20">
+    <section id="anreise" className="py-16 sm:py-20 bg-white border-b border-border/70">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -258,7 +275,7 @@ export function ArrivalGuide({
                 Deine stressfreie Anreise &amp; der Check-in
               </h2>
               <p className="mt-3 text-sm sm:text-base text-slate-600">
-                Von der Autobahn bis ins bezugsfertige Zimmer – diese 4 einfachen Schritte bringen dich sicher an.
+                Von der Anfahrt bis ins Zimmer – diese 4 Schritte bringen dich gut an.
               </p>
             </>
           )}
@@ -390,17 +407,19 @@ export function ArrivalGuide({
               <h4 className="font-bold text-hkjf-navy text-sm sm:text-base">
                 {isOnline
                   ? "Technische Probleme oder Einwahllink fehlt?"
-                  : "Stau oder Verspätung auf der Autobahn?"}
+                  : "Stau oder Verspätung?"}
               </h4>
               <p className="text-xs sm:text-sm text-slate-600">
                 {isOnline
-                  ? "Keine Panik! Die HLFS/HKJF-Seminarbetreuung hilft dir sofort weiter: (06421) 800-0 oder per Mail an bildungsstaette@hkjf.de."
-                  : "Keine Panik! Ein kurzer Anruf bei der Pforte genügt: (06421) 800-0. Dein Zimmer wird für dich freigehalten."}
+                  ? "Melde dich bei der Geschäftsstelle der HKJF: 06421 / 968 789 0 oder info@hkjf.de."
+                  : "Gib der HLFS-Außenstelle kurz Bescheid: 06421 389 0311 (Mo 07:00 – 16:30, Di – Fr 07:00 – 16:15 Uhr; außerhalb dieser Zeiten wird zum Hausmeister weitergeleitet)."}
               </p>
             </div>
           </div>
           <Button asChild variant="outline" size="sm" className="shrink-0 font-bold">
-            <a href="tel:064218000">Support anrufen</a>
+            <a href={isOnline ? "tel:064219687890" : "tel:064213890311"}>
+              {isOnline ? "HKJF anrufen" : "Außenstelle anrufen"}
+            </a>
           </Button>
         </div>
 

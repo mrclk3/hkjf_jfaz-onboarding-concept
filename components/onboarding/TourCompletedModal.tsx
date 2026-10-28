@@ -101,7 +101,7 @@ export function TourCompletedModal({
 
           <div className="inline-flex items-center gap-1.5 bg-amber-400/20 text-amber-300 border border-amber-300/30 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>{isOnline ? "Digital 100% Startklar" : "Offiziell 100% Startklar"}</span>
+            <span>Onboarding abgeschlossen</span>
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
@@ -166,15 +166,15 @@ export function TourCompletedModal({
               <>
                 <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Dresscode &amp; Saal bekannt</span>
+                  <span>Lehrgang &amp; Dresscode bekannt</span>
                 </div>
                 <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Anreise &amp; Pforte gecheckt</span>
+                  <span>Anreise &amp; Anmeldung gecheckt</span>
                 </div>
                 <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Campus &amp; Zimmer erkundet</span>
+                  <span>Zimmer &amp; Essenszeiten bekannt</span>
                 </div>
                 <div className="p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 font-bold">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />

@@ -63,14 +63,14 @@ export function FloatingFlowBar({
             <span className="hidden sm:inline">Zurück</span>
           </Button>
 
-          <div className="border-l border-slate-200 pl-2 sm:pl-3 min-w-0 hidden xs:block">
+          <div className="border-l border-slate-200 pl-2 sm:pl-3 min-w-0">
             <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               <span>Schritt {currentStepId}/{steps.length}</span>
               {isCompleted && (
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 inline shrink-0" />
               )}
             </div>
-            <p className="text-xs sm:text-sm font-extrabold text-hkjf-navy truncate max-w-[160px] sm:max-w-[280px]">
+            <p className="text-xs sm:text-sm font-extrabold text-hkjf-navy truncate max-w-[150px] xs:max-w-[220px] sm:max-w-[280px]">
               {currentStep.title}
             </p>
           </div>
@@ -94,7 +94,7 @@ export function FloatingFlowBar({
           ) : (
             <Button
               onClick={handleLastStepClick}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm px-4 sm:px-6 h-10 rounded-xl shadow-md gap-2 group cursor-pointer animate-pulse hover:animate-none"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm px-4 sm:px-6 h-10 rounded-xl shadow-md gap-2 group cursor-pointer ring-2 ring-emerald-300/70 ring-offset-1"
             >
               <Award className="w-4 h-4 text-amber-300" />
               <span>Tour abschließen 🎉</span>

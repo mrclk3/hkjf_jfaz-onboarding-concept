@@ -135,7 +135,7 @@ export function PacklistInteractive({
   return (
     <section
       id="packliste"
-      className="py-16 sm:py-20 bg-white border-b border-border/70 scroll-mt-20 print:py-4 print:border-none"
+      className="py-16 sm:py-20 bg-white border-b border-border/70 print:py-4 print:border-none"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 print:px-0">
         
@@ -147,7 +147,7 @@ export function PacklistInteractive({
                 Hessische Kinder- und Jugendfeuerwehr | JFAZ Marburg
               </span>
               <h1 className="text-2xl font-black text-slate-900 mt-1">
-                {isOnline ? "Offizielle Online-Seminar Checkliste" : "Offizielle Lehrgangs-Packliste"}
+                {isOnline ? "Online-Seminar Checkliste" : "Lehrgangs-Packliste"}
               </h1>
             </div>
             <div className="text-right text-[9pt] text-slate-600 space-y-0.5">
@@ -372,7 +372,7 @@ export function PacklistInteractive({
               >
                 <span>{cat.label}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                  className={`text-[10px] px-1.5 py-0.5 rounded-full ${
                     isSelected ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
                   }`}
                 >
@@ -422,13 +422,13 @@ export function PacklistInteractive({
                       </span>
 
                       {item.isCourseSpecific && (
-                        <span className="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded-md">
+                        <span className="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.5 rounded-md">
                           🎯 Nur für diesen Kurs
                         </span>
                       )}
 
                       {item.recommended && !item.isCourseSpecific && (
-                        <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded-md">
+                        <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-md">
                           Empfohlen
                         </span>
                       )}

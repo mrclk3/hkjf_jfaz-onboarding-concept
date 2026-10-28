@@ -11,7 +11,6 @@ import {
   MapPin,
   Clock,
   ExternalLink,
-  Footprints,
   Laptop,
   PhoneCall,
   WifiOff,
@@ -58,7 +57,7 @@ export function CappelGuide({ isOnline = false }: CappelGuideProps) {
   };
 
   return (
-    <section id="umgebung" className="py-16 sm:py-20 bg-white border-b border-border/70 scroll-mt-20">
+    <section id="umgebung" className="py-16 sm:py-20 bg-white border-b border-border/70">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
@@ -79,13 +78,13 @@ export function CappelGuide({ isOnline = false }: CappelGuideProps) {
           ) : (
             <>
               <Badge variant="gold" className="mb-3">
-                Einkauf &amp; Fußnähe
+                Einkauf &amp; Umgebung
               </Badge>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-hkjf-navy tracking-tight">
-                Cappel-Guide: Alles in Fußnähe rund ums JFAZ
+                Cappel-Guide: Was gibt es in der Nähe?
               </h2>
               <p className="mt-3 text-sm sm:text-base text-slate-600">
-                Duschgel vergessen, Heißhunger auf Pizza oder Snacks für den Abend gesucht? In 7 bis 12 Gehminuten erreichst du alle wichtigen Geschäfte in Cappel.
+                Duschgel vergessen oder Snacks für den Abend gesucht? Tippe auf eine Kategorie – Google Maps zeigt dir die nächstgelegenen Geschäfte mit aktuellen Öffnungszeiten.
               </p>
             </>
           )}
@@ -100,16 +99,16 @@ export function CappelGuide({ isOnline = false }: CappelGuideProps) {
                   <PhoneCall className="w-5 h-5" />
                 </div>
                 <CardTitle className="text-base font-bold text-hkjf-navy">
-                  Hotline der Seminarleitung
+                  Kontakt zur HKJF
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-xs sm:text-sm text-slate-600 space-y-2">
                 <p>
-                  Bei akuten Einwahlproblemen oder plötzlichem Internetausfall erreichst du unser Bildungsstätten-Team direkt:
+                  Bei Problemen mit der Einwahl oder fehlendem Zugangslink erreichst du die Geschäftsstelle der HKJF:
                 </p>
                 <div className="p-3 bg-white border border-indigo-200 rounded-xl font-bold text-indigo-900 text-xs">
-                  📞 Telefon: 06421 / 800-0<br />
-                  ✉️ E-Mail: bildungsstaette@hkjf.de
+                  📞 Telefon: <a href="tel:064219687890" className="underline">06421 / 968 789 0</a><br />
+                  ✉️ E-Mail: <a href="mailto:info@hkjf.de" className="underline">info@hkjf.de</a>
                 </div>
               </CardContent>
             </Card>
@@ -127,10 +126,10 @@ export function CappelGuide({ isOnline = false }: CappelGuideProps) {
                 <p>
                   1. Browser-Tab neu laden (F5 oder Strg+R).<br />
                   2. Router / WLAN kurz trennen &amp; neu verbinden.<br />
-                  3. Notfalls per Smartphone-Hotspot oder Telefon-Einwahl einwählen.
+                  3. Notfalls über den Smartphone-Hotspot wieder einwählen.
                 </p>
                 <p className="text-[11px] text-slate-500 pt-1">
-                  Die Dozenten lassen dich sofort wieder aus dem Warteraum ein!
+                  Gib der Lehrgangsleitung im Chat kurz Bescheid, wenn du wieder da bist.
                 </p>
               </CardContent>
             </Card>
@@ -141,15 +140,15 @@ export function CappelGuide({ isOnline = false }: CappelGuideProps) {
                   <FileText className="w-5 h-5" />
                 </div>
                 <CardTitle className="text-base font-bold text-hkjf-navy">
-                  Skripte &amp; Florix-Eintrag
+                  Unterlagen &amp; Bescheinigung
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-xs sm:text-sm text-slate-600 space-y-2">
                 <p>
-                  Alle Präsentationen und Gesetzestexte werden im Meeting-Chat und per Downloadlink geteilt.
+                  Wie Präsentationen und Unterlagen geteilt werden, legt die Lehrgangsleitung fest – meist im Meeting-Chat.
                 </p>
                 <p>
-                  Deine offizielle Teilnahmebescheinigung wird nach Kursende automatisch in Florix Hessen eingetragen.
+                  Wie du deine Teilnahmebescheinigung erhältst, erklärt dir die Lehrgangsleitung.
                 </p>
               </CardContent>
             </Card>
@@ -204,7 +203,7 @@ export function CappelGuide({ isOnline = false }: CappelGuideProps) {
                         {getIcon(loc.iconName)}
                       </div>
                       <Badge variant="outline" className="text-xs font-semibold text-slate-600 bg-white">
-                        <Footprints className="w-3.5 h-3.5 mr-1 text-hkjf-red" />
+                        <MapPin className="w-3.5 h-3.5 mr-1 text-hkjf-red" />
                         {loc.badge}
                       </Badge>
                     </div>
@@ -247,7 +246,7 @@ export function CappelGuide({ isOnline = false }: CappelGuideProps) {
                         rel="noopener noreferrer"
                       >
                         <MapPin className="w-3.5 h-3.5" />
-                        <span>In Google Maps öffnen</span>
+                        <span>In Google Maps suchen</span>
                         <ExternalLink className="w-3 h-3 ml-auto opacity-60" />
                       </a>
                     </Button>

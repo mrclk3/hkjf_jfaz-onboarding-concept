@@ -11,14 +11,14 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#f9f5eb] border-t-4 border-[#dd0a35] shadow-xs">
+    <header className="print:hidden sticky top-0 z-50 w-full bg-[#f9f5eb] border-t-4 border-[#dd0a35] shadow-xs">
       {/* Main Navigation Bar */}
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div data-header-bar className="flex items-center justify-between h-16 lg:h-20">
           
           {/* Brand / Logo */}
           <Link href="/" className="flex items-center gap-3 shrink-0 py-2">
-            <div className="relative h-12 sm:h-14 w-48 sm:w-56 flex items-center">
+            <div className="relative h-11 sm:h-12 lg:h-14 w-44 sm:w-52 lg:w-56 flex items-center">
               <Image
                 src="/assets/hkjf_logo.svg"
                 alt="Hessische Kinder- und Jugendfeuerwehr"
@@ -32,9 +32,11 @@ export function Navbar() {
 
           {/* Desktop Navigation Items */}
           <div className="hidden lg:flex items-center space-x-1 xl:space-x-2">
-            {navigationItems.map((item) => {
+            {navigationItems.map((item, index) => {
               const isStart = item.title === "Start";
               const isDropdownOpen = activeDropdown === item.title;
+              // Dropdowns of the right-most items open leftwards so they never overflow the viewport
+              const alignRight = index >= navigationItems.length - 2;
 
               return (
                 <div
@@ -71,7 +73,7 @@ export function Navbar() {
                   {/* Dropdown Menu Box */}
                   {item.dropdown && (
                     <div
-                      className={`absolute top-full left-0 w-64 bg-white shadow-2xl rounded-b-xl border border-t-0 border-slate-100 py-1 z-50 transition-all duration-150 before:content-[''] before:absolute before:-top-3 before:left-0 before:right-0 before:h-3 ${
+                      className={`absolute top-full ${alignRight ? "right-0" : "left-0"} w-64 bg-white shadow-2xl rounded-b-xl border border-t-0 border-slate-100 py-1 z-50 transition-all duration-150 before:content-[''] before:absolute before:-top-3 before:left-0 before:right-0 before:h-3 ${
                         isDropdownOpen
                           ? "opacity-100 visible"
                           : "opacity-0 invisible pointer-events-none group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto"
@@ -106,7 +108,8 @@ export function Navbar() {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-xl text-[#2b3467] hover:bg-white/80 transition-colors border border-slate-300"
-              aria-label="Menü öffnen"
+              aria-label={isMobileMenuOpen ? "Menü schließen" : "Menü öffnen"}
+              aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6 text-[#dd0a35]" />
@@ -120,7 +123,7 @@ export function Navbar() {
 
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden bg-white rounded-2xl shadow-xl border border-slate-200 mb-4 p-4 space-y-3 animate-in fade-in-50 duration-200">
+          <div className="lg:hidden bg-white rounded-2xl shadow-xl border border-slate-200 mb-4 p-4 space-y-3 max-h-[calc(100dvh-5.5rem)] overflow-y-auto overscroll-contain animate-in fade-in-50 duration-200">
             {navigationItems.map((item) => (
               <div key={item.title} className="border-b border-slate-100 pb-2">
                 <a

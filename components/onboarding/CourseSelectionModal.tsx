@@ -105,7 +105,7 @@ export function CourseSelectionModal({
       aria-modal="true"
     >
       <div
-        className={`relative w-full max-w-4xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border-2 border-slate-200 overflow-hidden flex flex-col max-h-[90vh] transition-all duration-300 ease-out transform ${
+        className={`relative w-full max-w-4xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border-2 border-slate-200 overflow-hidden flex flex-col max-h-[90vh] max-h-[90dvh] transition-all duration-300 ease-out transform ${
           isVisible
             ? "scale-100 opacity-100 translate-y-0"
             : "scale-95 opacity-0 translate-y-4"
@@ -187,7 +187,7 @@ export function CourseSelectionModal({
                 >
                   <span>{fmt.label}</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full ${
                       isActive ? "bg-slate-100 text-hkjf-navy" : "bg-slate-300/60 text-slate-600"
                     }`}
                   >
@@ -382,10 +382,11 @@ export function CourseSelectionModal({
 
               <Button
                 onClick={handleConfirm}
-                className="flex-1 md:flex-initial w-full md:w-auto bg-hkjf-red hover:bg-hkjf-redDark text-white font-black text-xs sm:text-sm h-11 px-4 sm:px-6 rounded-xl shadow-lg hover:shadow-red-500/20 gap-2 group transition-all justify-center"
+                className="flex-1 min-w-0 md:flex-initial w-full md:w-auto bg-hkjf-red hover:bg-hkjf-redDark text-white font-black text-xs sm:text-sm h-11 px-4 sm:px-6 rounded-xl shadow-lg hover:shadow-red-500/20 gap-2 group transition-all justify-center"
               >
                 <Compass className="w-4 h-4 shrink-0" />
-                <span className="whitespace-nowrap">Lehrgang bestätigen &amp; Starten</span>
+                <span className="whitespace-nowrap sm:hidden">Bestätigen &amp; starten</span>
+                <span className="whitespace-nowrap hidden sm:inline">Lehrgang bestätigen &amp; Starten</span>
                 <ArrowRight className="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>

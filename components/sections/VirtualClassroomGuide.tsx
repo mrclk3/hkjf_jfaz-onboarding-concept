@@ -31,7 +31,7 @@ export function VirtualClassroomGuide({
   const [activeTab, setActiveTab] = useState<"plenum" | "breakout" | "netiquette" | "docs">("plenum");
 
   return (
-    <div className="py-16 sm:py-20 bg-gradient-to-b from-slate-50 to-white border-b border-border/70 scroll-mt-20">
+    <div className="py-16 sm:py-20 bg-gradient-to-b from-slate-50 to-white border-b border-border/70">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
@@ -94,7 +94,7 @@ export function VirtualClassroomGuide({
               </CardTitle>
             </CardHeader>
             <CardContent className="text-xs sm:text-sm text-slate-600 space-y-1.5">
-              <p>Automatische Einteilung in Kleingruppen (3–5 Personen) für Fallbeispiele &amp; Praxisübungen.</p>
+              <p>Arbeit in Kleingruppen für Fallbeispiele &amp; Praxisübungen.</p>
               <span className="text-[11px] font-bold text-emerald-700 block pt-1">
                 Intensiver Erfahrungsaustausch
               </span>
@@ -121,7 +121,7 @@ export function VirtualClassroomGuide({
             <CardContent className="text-xs sm:text-sm text-slate-600 space-y-1.5">
               <p>Kamera an für lebendiges Miteinander. Virtuelles Melden bei Fragen und reger Chat-Austausch.</p>
               <span className="text-[11px] font-bold text-amber-800 block pt-1">
-                Kamera-Pflicht bei HKJF-Kursen
+                Vorgaben stehen in der Einladung
               </span>
             </CardContent>
           </Card>
@@ -146,7 +146,7 @@ export function VirtualClassroomGuide({
             <CardContent className="text-xs sm:text-sm text-slate-600 space-y-1.5">
               <p>Alle Seminarunterlagen, Gesetzestexte &amp; Vorlagen werden digital bereitgestellt.</p>
               <span className="text-[11px] font-bold text-purple-700 block pt-1">
-                Direkter Download im Chat
+                Meist über den Meeting-Chat
               </span>
             </CardContent>
           </Card>
@@ -186,10 +186,10 @@ export function VirtualClassroomGuide({
             {activeTab === "netiquette" && (
               <div className="space-y-2 animate-in fade-in-50 duration-200">
                 <h3 className="text-xl sm:text-2xl font-black">
-                  Kamera-Regel: Warum das Bild so wichtig ist
+                  Kamera: Warum das Bild hilft
                 </h3>
                 <p className="text-xs sm:text-sm text-indigo-100 leading-relaxed">
-                  Jugendarbeit lebt vom Miteinander! Bei anerkannten Jugendfeuerwehr-Lehrgängen ist die aktive Teilnahme mit Webcam Pflicht. So siehst du die Reaktionen der anderen und die Referenten wissen, ob alle mitkommen. Wähle einfach einen neutralen Hintergrund oder nutze den Weichzeichner.
+                  Jugendarbeit lebt vom Miteinander! Ob die Kamera an sein muss, steht in deiner Einladung – für Gruppenarbeiten ist sie in jedem Fall hilfreich. So siehst du die Reaktionen der anderen und die Referenten wissen, ob alle mitkommen. Wähle einfach einen neutralen Hintergrund oder nutze den Weichzeichner.
                 </p>
               </div>
             )}
@@ -200,7 +200,7 @@ export function VirtualClassroomGuide({
                   Seminarunterlagen &amp; Teilnahmebescheinigung
                 </h3>
                 <p className="text-xs sm:text-sm text-indigo-100 leading-relaxed">
-                  Keine Sorge um schwere Ordner: Alle Skripte erhältst du als PDF zum Speichern auf deinem Rechner. Nach dem Kurs wird dein Leistungsnachweis digital bestätigt und in Florix Hessen für deine Heimatfeuerwehr hinterlegt.
+                  Unterlagen werden in der Regel digital geteilt. Wie und wann du deine Teilnahmebescheinigung erhältst, erklärt dir die Lehrgangsleitung.
                 </p>
               </div>
             )}

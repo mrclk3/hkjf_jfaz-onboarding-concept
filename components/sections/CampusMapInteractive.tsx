@@ -20,13 +20,18 @@ import {
   ArrowUpRight,
   Info,
 } from "lucide-react";
-import { campusBuildings, CampusBuilding } from "@/data/campusMapData";
+import {
+  campusBuildings,
+  CampusBuilding,
+  OFFICIAL_SITE_PLAN_URL,
+  HLFS_MARBURG_INFO_URL,
+} from "@/data/campusMapData";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export function CampusMapInteractive() {
-  const [selectedBuildingId, setSelectedBuildingId] = useState<string>("hauptgebaeude");
+  const [selectedBuildingId, setSelectedBuildingId] = useState<string>("verwaltung");
   const [activeFilter, setActiveFilter] = useState<string>("all");
 
   const selectedBuilding =
@@ -54,11 +59,11 @@ export function CampusMapInteractive() {
   };
 
   const filterOptions = [
-    { id: "all", label: "Alle Gebäude" },
-    { id: "verwaltung", label: "🏛️ Pforte & Empfang" },
+    { id: "all", label: "Alle Bereiche" },
+    { id: "verwaltung", label: "🏛️ Anmeldung" },
     { id: "unterricht", label: "📚 Lehrsäle" },
     { id: "wohnen", label: "🛏️ Unterkünfte" },
-    { id: "verpflegung", label: "🍽️ Mensa" },
+    { id: "verpflegung", label: "🍽️ Speisesaal" },
     { id: "parken", label: "🚗 Parken" },
   ];
 
@@ -68,19 +73,29 @@ export function CampusMapInteractive() {
       : campusBuildings.filter((b) => b.category === activeFilter);
 
   return (
-    <section id="lageplan" className="py-16 sm:py-20 bg-white border-b border-border/70 scroll-mt-20">
+    <section id="lageplan" className="py-16 sm:py-20 bg-white border-b border-border/70">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-10">
           <Badge variant="default" className="mb-3">
-            Interaktiver Gebäude-Finder
+            Orientierung auf dem Gelände
           </Badge>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-hkjf-navy tracking-tight">
-            Schematischer Campus-Lageplan
+            Schematische Geländeübersicht
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600">
-            Klicke auf ein Gebäude, um sofort Eingänge, Stockwerke, Zimmernummern und Barrierefreiheit einzusehen.
+            Klicke auf einen Bereich für Zeiten und Hinweise. Die Skizze ist nicht maßstabsgetreu –
+            verbindlich ist der{" "}
+            <a
+              href={OFFICIAL_SITE_PLAN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-hkjf-red underline underline-offset-2"
+            >
+              offizielle Lageplan der HLFS (PDF)
+            </a>
+            .
           </p>
         </div>
 
@@ -273,20 +288,7 @@ export function CampusMapInteractive() {
                         {b.category.toUpperCase()}
                       </text>
 
-                      {/* Specific Badges inside Building */}
-                      {b.roomNumbers && (
-                        <text
-                          x={b.coordinates.x + 14}
-                          y={b.coordinates.y + b.coordinates.height - 14}
-                          fill="#059669"
-                          fontSize="10"
-                          fontWeight="bold"
-                        >
-                          🔑 {b.roomNumbers.split("(")[0]}
-                        </text>
-                      )}
-
-                      {b.id === "hauptgebaeude" && (
+                      {b.id === "verwaltung" && (
                         <text
                           x={b.coordinates.x + 14}
                           y={b.coordinates.y + b.coordinates.height - 14}
@@ -294,11 +296,11 @@ export function CampusMapInteractive() {
                           fontSize="10"
                           fontWeight="bold"
                         >
-                          ★ 1. Anlaufstelle &amp; Keycard
+                          ★ 1. Anlaufstelle &amp; Transponder
                         </text>
                       )}
 
-                      {b.id === "mensa" && (
+                      {b.id === "speisesaal" && (
                         <text
                           x={b.coordinates.x + 14}
                           y={b.coordinates.y + b.coordinates.height - 14}
@@ -312,16 +314,6 @@ export function CampusMapInteractive() {
                     </g>
                   );
                 })}
-
-                {/* Compass Rose Indicator in Top-Right */}
-                <g transform="translate(1070, 70)">
-                  <circle cx="0" cy="0" r="18" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2" />
-                  <polygon points="0,-14 4,0 0,-4 -4,0" fill="#dd0a35" />
-                  <polygon points="0,14 4,0 0,4 -4,0" fill="#64748b" />
-                  <text x="0" y="-18" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#dd0a35">
-                    N
-                  </text>
-                </g>
               </svg>
 
             </div>
@@ -331,7 +323,7 @@ export function CampusMapInteractive() {
               <div className="flex items-center gap-4 flex-wrap">
                 <span className="flex items-center gap-1.5">
                   <span className="w-3 h-3 rounded bg-red-100 border border-red-400 inline-block" />
-                  <span>Verwaltung &amp; Pforte</span>
+                  <span>Anmeldung</span>
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="w-3 h-3 rounded bg-blue-100 border border-blue-400 inline-block" />
@@ -339,11 +331,11 @@ export function CampusMapInteractive() {
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="w-3 h-3 rounded bg-emerald-100 border border-emerald-400 inline-block" />
-                  <span>Zimmer / Wohnen</span>
+                  <span>Unterkunft</span>
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="w-3 h-3 rounded bg-amber-100 border border-amber-400 inline-block" />
-                  <span>Mensa &amp; Bistro</span>
+                  <span>Speisesaal</span>
                 </span>
               </div>
               <span className="text-[11px] font-semibold text-hkjf-navy">
@@ -355,7 +347,7 @@ export function CampusMapInteractive() {
 
           {/* Detailed Inspector Panel (lg:col-span-5) */}
           <div className="lg:col-span-5">
-            <Card className="border-2 border-slate-200 shadow-lg sticky top-24">
+            <Card className="border-2 border-slate-200 shadow-lg lg:sticky lg:top-[calc(var(--sticky-offset,140px)+1rem)]">
               <CardHeader className="pb-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100 rounded-t-2xl">
                 <div className="flex items-start justify-between gap-3">
                   <div className="p-3 rounded-2xl bg-white shadow-sm border border-slate-200/80">
@@ -387,42 +379,33 @@ export function CampusMapInteractive() {
                   </p>
                 </div>
 
-                {/* 2. Stockwerke & Raumaufteilung */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-hkjf-navy uppercase tracking-wide">
-                    <Layers className="w-4 h-4 text-blue-600" />
-                    <span>Stockwerke &amp; Räume</span>
-                  </div>
+                {/* 2. Wichtige Infos */}
+                {selectedBuilding.details.length > 0 && (
                   <div className="space-y-1.5">
-                    {selectedBuilding.floors.map((floor, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-start gap-2.5 p-2 rounded-xl bg-white border border-slate-200/80 text-xs"
-                      >
-                        <span className="font-extrabold text-hkjf-navy bg-slate-100 px-2 py-0.5 rounded-md shrink-0">
-                          {floor.level}
-                        </span>
-                        <span className="text-slate-600 leading-snug">{floor.description}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 3. Barrierefreiheit & Aufzug */}
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-hkjf-navy uppercase tracking-wide">
-                    <Accessibility className="w-4 h-4 text-emerald-600" />
-                    <span>Barrierefreiheit</span>
-                  </div>
-                  <div className="bg-emerald-50/70 border border-emerald-200/80 p-2.5 rounded-xl text-xs space-y-1.5 text-emerald-950">
-                    <div className="flex items-center gap-3 font-semibold">
-                      <span>{selectedBuilding.accessibility.hasElevator ? "✓ Aufzug vorhanden" : "– Kein Aufzug"}</span>
-                      <span>{selectedBuilding.accessibility.hasRamp ? "✓ Stufenloser Zugang" : ""}</span>
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-hkjf-navy uppercase tracking-wide">
+                      <Layers className="w-4 h-4 text-blue-600" />
+                      <span>Gut zu wissen</span>
                     </div>
-                    <p className="text-emerald-900/80 text-[11px] leading-relaxed">
-                      {selectedBuilding.accessibility.notes}
-                    </p>
+                    <ul className="space-y-1.5">
+                      {selectedBuilding.details.map((detail, idx) => (
+                        <li
+                          key={idx}
+                          className="p-2 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-600 leading-snug"
+                        >
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
+                )}
+
+                {/* 3. Barrierefreiheit */}
+                <div className="flex items-start gap-2 p-2.5 bg-emerald-50/70 border border-emerald-200/80 rounded-xl text-xs text-emerald-950">
+                  <Accessibility className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <p className="leading-relaxed">
+                    <strong>Barrierefreiheit:</strong> Wenn du besondere Bedürfnisse hast, kläre sie bitte vor der Anreise
+                    mit der HKJF (06421 / 968 789 0) oder der HLFS-Außenstelle (06421 389 0311).
+                  </p>
                 </div>
 
                 {/* 4. Öffnungszeiten / Zugang */}
@@ -438,10 +421,20 @@ export function CampusMapInteractive() {
                 <div className="flex items-start gap-2.5 p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-950 text-xs">
                   <Lightbulb className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="font-bold text-amber-900">JFAZ-Tipp: </strong>
+                    <strong className="font-bold text-amber-900">Tipp: </strong>
                     <span>{selectedBuilding.tips}</span>
                   </div>
                 </div>
+
+                <a
+                  href={HLFS_MARBURG_INFO_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-xs font-bold text-hkjf-navy hover:text-hkjf-red"
+                >
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <span>Alle Infos zum Standort auf hlfs.hessen.de</span>
+                </a>
 
               </CardContent>
             </Card>
