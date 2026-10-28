@@ -51,10 +51,21 @@
   }
   html {
     scroll-behavior: smooth;
+    /* Height of sticky navbar + onboarding stepper, measured in OnboardingStepper */
+    scroll-padding-top: calc(var(--sticky-offset, 140px) + 8px);
   }
   body {
     @apply bg-hkjf-cream text-hkjf-text font-sans antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
 

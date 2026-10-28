@@ -21,59 +21,59 @@ const physicalQuizQuestions: Question[] = [
       {
         text: "Ja, Kissen, Decke und Bezüge müssen komplett mitgebracht werden.",
         correct: false,
-        explanation: "Falsch: Bettwäsche ist im JFAZ vorhanden und frisch bezogen!",
+        explanation: "Falsch: Bettwäsche wird gestellt!",
       },
       {
-        text: "Nein, Bettwäsche ist vorhanden und frisch bezogen. Nur eigene Handtücher einpacken!",
+        text: "Nein, Bettwäsche wird gestellt. Nur eigene Handtücher einpacken!",
         correct: true,
-        explanation: "Richtig! Bettwäsche ist vor Ort. Du brauchst nur dein Handtuch & Duschgel.",
+        explanation: "Richtig! Bettwäsche wird gestellt. Du brauchst nur dein Handtuch & Duschgel.",
       },
       {
         text: "Nur ein Schlafsack ist erlaubt.",
         correct: false,
-        explanation: "Falsch: Du schläfst in einem bequemen Bett mit frischer Bettwäsche.",
+        explanation: "Falsch: Du schläfst in einem Einzelzimmer, Bettwäsche wird gestellt.",
       },
     ],
   },
   {
     id: 2,
-    question: "Wo erhältst du deinen Zimmerschlüssel bei deiner Ankunft?",
+    question: "Was öffnet dir bei deinem Aufenthalt Zimmer, Seiteneingänge und Zufahrtstor?",
     options: [
       {
-        text: "Im Supermarkt um die Ecke.",
+        text: "Ein klassischer Schlüsselbund, den du per Post bekommst.",
         correct: false,
-        explanation: "Falsch: Den Schlüssel gibt es direkt am Campus.",
+        explanation: "Falsch: Du bekommst vor Ort einen Transponder.",
       },
       {
-        text: "Direkt an der Pforte / Rezeption im JFAZ-Hauptgebäude.",
+        text: "Ein Transponder, den du bei der Anmeldung am Anreisetag erhältst.",
         correct: true,
-        explanation: "Genau richtig! Die Pforte begrüßt dich und händigt dir deine Zimmerkarte aus.",
+        explanation: "Genau richtig! Den Transponder gibt es bei der Anmeldung.",
       },
       {
-        text: "Der Schlüssel liegt unter der Fußmatte.",
+        text: "Gar nichts – alle Türen sind immer offen.",
         correct: false,
-        explanation: "Falsch: Bitte melde dich an der offiziellen Pforte.",
+        explanation: "Falsch: Zimmer und Eingänge öffnest du mit deinem Transponder.",
       },
     ],
   },
   {
     id: 3,
-    question: "Welche Geschäfte erreichst du zu Fuß in Cappel in wenigen Minuten?",
+    question: "Was gilt am Abreisetag?",
     options: [
       {
-        text: "Keine, das JFAZ liegt fernab jeder Zivilisation.",
+        text: "Einfach losfahren, das Zimmer wird komplett vom Personal gemacht.",
         correct: false,
-        explanation: "Falsch: Cappel hat eine hervorragende Nahversorgung.",
+        explanation: "Falsch: Bett abziehen und Transponder zurückgeben gehören dazu.",
       },
       {
-        text: "ALDI Nord, Lidl, tegut, dm-Drogerie, Apotheke und Pizzeria/Imbiss.",
+        text: "Bett abziehen und den Transponder bis 14:00 Uhr zurückgeben.",
         correct: true,
-        explanation: "Sehr gut aufgepasst! Alles ist in 7 bis 12 Minuten gemütlich zu Fuß erreichbar.",
+        explanation: "Sehr gut aufgepasst! So klappt die Abreise reibungslos.",
       },
       {
-        text: "Nur einen Flughafen.",
+        text: "Den Transponder als Andenken mitnehmen.",
         correct: false,
-        explanation: "Falsch: In Cappel gibt es tolle Supermärkte, Drogerien und Imbisse.",
+        explanation: "Falsch: Der Transponder muss bis 14:00 Uhr zurückgegeben werden.",
       },
     ],
   },
@@ -97,28 +97,28 @@ const onlineQuizQuestions: Question[] = [
       {
         text: "Einloggen ist optional, man kann die Aufzeichnung später schauen.",
         correct: false,
-        explanation: "Falsch: Online-Lehrgänge der HKJF sind interaktiv mit Anwesenheitspflicht.",
+        explanation: "Falsch: Online-Lehrgänge leben vom Mitmachen – du nimmst live teil."
       },
     ],
   },
   {
     id: 2,
-    question: "Gilt für die Teilnahme an Online-Seminaren der HKJF eine Kamera-Pflicht?",
+    question: "Wo findest du verbindliche Vorgaben, z. B. ob deine Kamera an sein muss?",
     options: [
       {
-        text: "Nein, die Kamera darf durchgehend aus bleiben.",
+        text: "Irgendwo in Social Media.",
         correct: false,
-        explanation: "Falsch: Eine aktive Seminarteilnahme erfordert Bild und Ton.",
+        explanation: "Falsch: Verbindlich ist das, was dir die HKJF schickt.",
       },
       {
-        text: "Ja, für anerkannte Lehrgänge (z. B. JuLeiCa) ist die Kamera für Teilnahmenachweis und Gruppenarbeiten anzuschalten.",
+        text: "In deiner Einladung bzw. bei der Lehrgangsleitung.",
         correct: true,
-        explanation: "Sehr gut! Nur mit eingeschalteter Kamera ist ein lebendiger Austausch in Breakout-Rooms möglich.",
+        explanation: "Sehr gut! Einladung und Lehrgangsleitung sagen dir, was für deinen Lehrgang gilt.",
       },
       {
-        text: "Nur am Schluss für ein Gruppenfoto.",
+        text: "Das muss ich mir selbst ausdenken.",
         correct: false,
-        explanation: "Falsch: Die Kamera begleitet die interaktiven Einheiten des Lehrgangs.",
+        explanation: "Falsch: Die Vorgaben stehen in deiner Einladung.",
       },
     ],
   },
@@ -139,7 +139,7 @@ const onlineQuizQuestions: Question[] = [
       {
         text: "Ja, um die Teilnahmebescheinigung abzuholen.",
         correct: false,
-        explanation: "Falsch: Die Bescheinigung wird digital ausgestellt und in Florix hinterlegt.",
+        explanation: "Falsch: Für ein Online-Seminar musst du nicht anreisen."
       },
     ],
   },
@@ -203,7 +203,7 @@ export function StartklarQuiz({ isOnline = false, courseTitle }: StartklarQuizPr
   const score = calculateScore();
 
   return (
-    <section id="quiz" className="py-16 sm:py-20 bg-slate-50 border-b border-border/70 scroll-mt-20">
+    <section id="quiz" className="py-16 sm:py-20 bg-slate-50 border-b border-border/70">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
@@ -217,7 +217,7 @@ export function StartklarQuiz({ isOnline = false, courseTitle }: StartklarQuizPr
           <p className="mt-3 text-sm sm:text-base text-slate-600">
             {isOnline
               ? "Teste in 3 schnellen Fragen, ob du alle Online-Regeln, Einwahlzeiten und Voraussetzungen kennst."
-              : "Teste dein Wissen in 3 kurzen Fragen und sichere dir dein offizielles Startklar-Abzeichen."}
+              : "Teste in 3 kurzen Fragen, ob du an alles Wichtige für deinen Aufenthalt gedacht hast."}
           </p>
         </div>
 
@@ -294,7 +294,7 @@ export function StartklarQuiz({ isOnline = false, courseTitle }: StartklarQuizPr
           })}
         </div>
 
-        {/* Action Button & Result Certificate */}
+        {/* Action Button & Result */}
         <div className="mt-8 text-center">
           {!showResults ? (
             <Button
@@ -314,7 +314,7 @@ export function StartklarQuiz({ isOnline = false, courseTitle }: StartklarQuizPr
 
               <div className="space-y-1">
                 <Badge variant="gold" className="font-bold uppercase tracking-wider text-slate-950">
-                  {isOnline ? "Digital Startklar-Zertifikat" : "Offizieller Startklar-Nachweis"}
+                  Dein Ergebnis
                 </Badge>
                 <h3 className="text-2xl font-black">
                   {score === 3
@@ -327,7 +327,7 @@ export function StartklarQuiz({ isOnline = false, courseTitle }: StartklarQuizPr
                   {score === 3
                     ? isOnline
                       ? `Du hast deinen digitalen Schreibtisch optimal vorbereitet und kennst alle Online-Regeln für "${courseTitle || "dein Seminar"}". Wir wünschen dir viel Erfolg und produktive Stunden!`
-                      : `Du kennst alle Abläufe, die Zimmerregeln und die Cappel-Geheimtipps. Wir wünschen dir einen fantastischen Aufenthalt im JFAZ Marburg!`
+                      : `Du kennst die wichtigsten Abläufe für deinen Aufenthalt. Wir wünschen dir einen schönen Lehrgang in Marburg-Cappel!`
                     : "Lies dir die Tipps oben noch einmal in Ruhe durch, dann bist du bestens vorbereitet."}
                 </p>
               </div>

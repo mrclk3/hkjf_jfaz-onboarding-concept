@@ -38,7 +38,7 @@ export function FaqAccordion({ isOnline = false }: FaqAccordionProps) {
   });
 
   return (
-    <section id="faq" className="py-16 sm:py-20 bg-hkjf-cream border-b border-border/70 scroll-mt-20">
+    <section id="faq" className="py-16 sm:py-20 bg-hkjf-cream border-b border-border/70">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}

@@ -50,13 +50,13 @@ export function StepFlowFooter({
           <h3 className="text-lg sm:text-xl font-black text-white">
             {nextStep
               ? `Als Nächstes: Schritt ${nextStep.id} – ${nextStep.title}`
-              : "Letzter Schritt erreicht: Startklar-Quiz & Nachweis"}
+              : "Letzter Schritt: Startklar-Quiz"}
           </h3>
 
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
             {nextStep
               ? nextStep.description
-              : "Teste dein Wissen in 3 kurzen Fragen und erhalte deinen offiziellen Startklar-Nachweis!"}
+              : "Teste in 3 kurzen Fragen, ob du an alles gedacht hast."}
           </p>
 
           {nextStep && (

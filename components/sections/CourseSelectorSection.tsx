@@ -77,7 +77,7 @@ export function CourseSelectorSection({
   return (
     <section
       id="lehrgangs-finder"
-      className="py-14 sm:py-20 bg-slate-50 border-b border-border/80 scroll-mt-16"
+      className="py-14 sm:py-20 bg-slate-50 border-b border-border/80"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -85,13 +85,13 @@ export function CourseSelectorSection({
         <div className="text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-hkjf-navy border border-blue-200/80 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3 shadow-sm">
             <GraduationCap className="w-4 h-4 text-hkjf-red" />
-            <span>Offizieller HKJF Lehrgangsplan</span>
+            <span>HKJF Lehrgangsangebot</span>
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-hkjf-navy tracking-tight">
             Welchen Lehrgang besuchst du?
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
-            Wähle dein Seminar aus dem offiziellen Jahresprogramm der Hessischen Kinder- und
+            Wähle dein Seminar aus dem Lehrgangsangebot der Hessischen Kinder- und
             Jugendfeuerwehr. Dein Onboarding, der Dresscode und deine Packliste passen sich
             automatisch an.
           </p>
@@ -144,7 +144,7 @@ export function CourseSelectorSection({
                   >
                     <span>{fmt.label}</span>
                     <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
                         isActive ? "bg-slate-100 text-hkjf-navy" : "bg-slate-300/70 text-slate-700"
                       }`}
                     >
@@ -341,7 +341,7 @@ export function CourseSelectorSection({
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs font-black uppercase tracking-wider">
                         {currentCourse.format === "online"
-                          ? "Arbeitsplatz & Kamera-Voraussetzung:"
+                          ? "Arbeitsplatz:"
                           : "Kleidungsempfehlung / Dresscode:"}
                       </span>
                       <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-white shadow-xs">
@@ -350,6 +350,9 @@ export function CourseSelectorSection({
                     </div>
                     <p className="text-xs sm:text-sm leading-relaxed opacity-95">
                       {currentCourse.clothingAdvice}
+                    </p>
+                    <p className="text-[11px] leading-snug opacity-80">
+                      Empfehlung – verbindlich sind die Angaben in deiner Einberufung.
                     </p>
                   </div>
                 </div>
@@ -366,7 +369,7 @@ export function CourseSelectorSection({
                       <span>
                         {currentCourse.format === "online"
                           ? "Plattform & Zugang"
-                          : "Ort & Lehrsäle"}
+                          : "Dein Lehrsaal"}
                       </span>
                     </div>
                     <p className="text-xs sm:text-sm font-bold text-hkjf-navy">
@@ -374,14 +377,14 @@ export function CourseSelectorSection({
                     </p>
                     {currentCourse.format === "online" ? (
                       <span className="text-[11px] font-bold text-indigo-600 inline-block pt-1">
-                        Link per E-Mail vor Seminarbeginn
+                        Zugang per E-Mail vor Beginn
                       </span>
                     ) : (
                       <a
                         href="#campus"
                         className="text-[11px] font-bold text-hkjf-red hover:underline inline-block pt-1"
                       >
-                        Im Campus-Finder anzeigen &rarr;
+                        Zur Geländeübersicht &rarr;
                       </a>
                     )}
                   </div>

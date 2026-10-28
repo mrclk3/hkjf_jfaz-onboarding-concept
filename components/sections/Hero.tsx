@@ -12,6 +12,7 @@ import {
   GraduationCap,
   ChevronRight,
   Shirt,
+  Car,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +44,7 @@ export function Hero({
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 bg-red-50 text-hkjf-red border border-red-200/80 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-5 shadow-sm">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Offizielles Onboarding-Portal der HKJF</span>
+            <span>Onboarding der HKJF</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-hkjf-navy tracking-tight leading-[1.15] mb-4">
@@ -63,7 +64,7 @@ export function Hero({
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={onOpenCourseModal ? onOpenCourseModal : undefined}
-              className={`inline-flex items-center gap-2.5 bg-white hover:bg-slate-50 text-hkjf-navy border-2 px-4 py-2 rounded-2xl shadow-sm transition-all group max-w-xl text-left cursor-pointer ${
+              className={`inline-flex items-center gap-2.5 bg-white hover:bg-slate-50 text-hkjf-navy border-2 px-4 py-2 rounded-2xl shadow-sm transition-all group w-full sm:w-auto max-w-full sm:max-w-xl min-w-0 text-left cursor-pointer ${
                 activeCourse.format === "online"
                   ? "border-indigo-300 hover:border-indigo-600 ring-2 ring-indigo-500/10"
                   : "border-slate-200 hover:border-hkjf-red"
@@ -79,11 +80,11 @@ export function Hero({
               >
                 <GraduationCap className="w-4 h-4" />
               </div>
-              <div className="text-xs min-w-0">
-                <div className="flex items-center gap-2">
+              <div className="text-xs min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                   <span className="text-slate-500 font-medium block">Aktuell ausgewählter Lehrgang:</span>
                   {activeCourse.format === "online" && (
-                    <span className="text-[10px] font-black uppercase tracking-wider bg-indigo-600 text-white px-1.5 py-0.2 rounded">
+                    <span className="text-[10px] font-black uppercase tracking-wider bg-indigo-600 text-white px-1.5 py-0.5 rounded">
                       💻 Online
                     </span>
                   )}
@@ -139,7 +140,7 @@ export function Hero({
                   {persona === "newcomer" && <CheckCircle className="w-4 h-4 text-amber-300" />}
                 </div>
                 <p className={`text-xs mt-1 leading-snug ${persona === "newcomer" ? "text-red-100" : "text-slate-500"}`}>
-                  Schritt-für-Schritt-Führung: Von Anfahrt über Zimmerkarte bis zur Packliste.
+                  Schritt-für-Schritt-Führung: Von der Anfahrt über die Anmeldung bis zur Packliste.
                 </p>
               </div>
             </button>
@@ -181,19 +182,22 @@ export function Hero({
             <div className="relative h-72 sm:h-96 w-full rounded-2xl overflow-hidden shadow-xl border-4 border-white">
               <Image
                 src="/assets/jfaz_hero.jpg"
-                alt="Jugendfeuerwehrausbildungszentrum Marburg"
+                alt="Symbolbild: Feuerwehr-Ausbildungszentrum"
                 fill
                 priority
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-hkjf-navyDark/85 via-transparent to-black/20" />
+              <span className="absolute top-3 right-3 bg-black/60 text-white text-[10px] font-semibold px-2 py-0.5 rounded">
+                Symbolbild
+              </span>
               
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white space-y-2">
                 <Badge variant="gold" className="font-bold">
                   Standort Marburg-Cappel
                 </Badge>
                 <h3 className="text-xl sm:text-2xl font-bold leading-snug">
-                  Modern lernen, zusammenwachsen und Freizeit genießen.
+                  Lernen, zusammenwachsen und Kontakte in ganz Hessen knüpfen.
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-200 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-hkjf-red" />
@@ -204,12 +208,12 @@ export function Hero({
 
             {/* Float Highlight Badge */}
             <div className="absolute -bottom-4 -right-2 sm:right-6 bg-white rounded-xl p-3.5 shadow-xl border border-slate-100 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-red-100 text-hkjf-red flex items-center justify-center font-black text-lg">
-                24h
+              <div className="w-10 h-10 rounded-lg bg-red-100 text-hkjf-red flex items-center justify-center">
+                <Car className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <span className="text-xs font-bold text-hkjf-navy block">Pforte &amp; Schlüssel</span>
-                <span className="text-[11px] text-slate-500">Spätanreise jederzeit möglich</span>
+                <span className="text-xs font-bold text-hkjf-navy block">Neue Einfahrt</span>
+                <span className="text-[11px] text-slate-500">Aktuell über die Umgehungsstraße</span>
               </div>
             </div>
           </div>
@@ -239,11 +243,11 @@ export function Hero({
                     </li>
                     <li className="flex items-start gap-2.5">
                       <span className="w-5 h-5 rounded-full bg-red-100 text-hkjf-red font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
-                      <span><strong>Anfahrt &amp; Parken:</strong> Kostenfreie Parkplätze direkt hinter der Schranke.</span>
+                      <span><strong>Anfahrt:</strong> Einfahrt aktuell über die Umgehungsstraße – Beschilderung beachten.</span>
                     </li>
                     <li className="flex items-start gap-2.5">
                       <span className="w-5 h-5 rounded-full bg-red-100 text-hkjf-red font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
-                      <span><strong>Check-in:</strong> Schlüsselkarte an der Pforte abholen (auch sonntags).</span>
+                      <span><strong>Anmeldung:</strong> Transponder für Zimmer &amp; Eingänge abholen.</span>
                     </li>
                   </ul>
                   <div className="pt-2 flex flex-col sm:flex-row gap-2.5">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 export interface OnboardingStep {
   id: number;
@@ -28,9 +28,9 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     id: 2,
     slug: "anreise",
     targetId: "step-anreise",
-    title: "Anreise, Schranke & Check-in",
+    title: "Anreise, Einfahrt & Anmeldung",
     shortTitle: "Anreise",
-    description: "Navigationsadresse, Parken, Pforte und Schlüsselabholung.",
+    description: "Navigationsadresse, neue Einfahrt, Anmeldezeiten und Transponder.",
     estimatedTime: "1 Min.",
     iconName: "Navigation",
   },
@@ -38,9 +38,9 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     id: 3,
     slug: "campus",
     targetId: "step-campus",
-    title: "Campus, Lehrsäle & Zimmer",
+    title: "Gelände, Zimmer & Verpflegung",
     shortTitle: "Campus",
-    description: "Interaktive Geländeübersicht, Bettenhäuser und Räume.",
+    description: "Geländeübersicht, Einzelzimmer, Essenszeiten und Lageplan.",
     estimatedTime: "1.5 Min.",
     iconName: "MapPin",
   },
@@ -50,7 +50,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     targetId: "step-ablauf",
     title: "Tagesablauf & Essenszeiten",
     shortTitle: "Tagesablauf",
-    description: "Frühstück, Unterrichtsblöcke, Mensazeiten und Bistro.",
+    description: "Frühstück, Unterrichtsblöcke und Essenszeiten.",
     estimatedTime: "1 Min.",
     iconName: "Clock",
   },
@@ -70,7 +70,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     targetId: "step-umgebung",
     title: "Cappel-Guide & FAQ",
     shortTitle: "Cappel & FAQ",
-    description: "Supermärkte, Apotheke, Pizzeria in Gehdistanz & Notfallhilfe.",
+    description: "Einkauf in der Nähe und Antworten auf häufige Fragen.",
     estimatedTime: "1 Min.",
     iconName: "ShoppingBag",
   },
@@ -78,9 +78,9 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     id: 7,
     slug: "quiz",
     targetId: "step-quiz",
-    title: "Startklar-Quiz & Zertifikat",
+    title: "Startklar-Quiz",
     shortTitle: "Startklar-Quiz",
-    description: "3-Fragen-Check, Konfetti und dein offizielles Starter-Abzeichen.",
+    description: "3 kurze Fragen, um zu prüfen, ob du an alles gedacht hast.",
     estimatedTime: "1 Min.",
     iconName: "Award",
   },
@@ -133,7 +133,7 @@ export const ONLINE_ONBOARDING_STEPS: OnboardingStep[] = [
     targetId: "step-packliste",
     title: "Schreibtisch- & Technik-Checkliste",
     shortTitle: "Checkliste",
-    description: "Headset, Webcam, Florix-Zugang & Notizen digital abhaken.",
+    description: "Headset, Webcam & Notizen digital abhaken.",
     estimatedTime: "1.5 Min.",
     iconName: "Package",
   },
@@ -151,9 +151,9 @@ export const ONLINE_ONBOARDING_STEPS: OnboardingStep[] = [
     id: 7,
     slug: "quiz",
     targetId: "step-quiz",
-    title: "Online-Startklar-Quiz & Zertifikat",
+    title: "Online-Startklar-Quiz",
     shortTitle: "Startklar-Quiz",
-    description: "3-Fragen-Check für dein digitales Seminar & offizielles Abzeichen.",
+    description: "3 kurze Fragen rund um dein Online-Seminar.",
     estimatedTime: "1 Min.",
     iconName: "Award",
   },
@@ -161,28 +161,37 @@ export const ONLINE_ONBOARDING_STEPS: OnboardingStep[] = [
 
 export type FlowMode = "guided" | "overview";
 
+// How long scroll-spy stays quiet after a programmatic jump (smooth scroll passes other steps)
+const SCROLL_LOCK_MS = 1200;
+
 export function useOnboardingFlow(isOnline: boolean = false) {
   const [currentStepId, setCurrentStepId] = useState<number>(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [flowMode, setFlowMode] = useState<FlowMode>("guided");
   const [isClient, setIsClient] = useState(false);
+  const scrollLockUntil = useRef(0);
 
   const activeSteps = isOnline ? ONLINE_ONBOARDING_STEPS : ONBOARDING_STEPS;
+  const stepCount = activeSteps.length;
 
   // Load from localStorage
   useEffect(() => {
-    setIsClient(true);
     try {
       const savedStep = localStorage.getItem("jfaz_flow_step");
       if (savedStep) {
         const stepNum = parseInt(savedStep, 10);
-        if (stepNum >= 1 && stepNum <= activeSteps.length) {
+        if (stepNum >= 1 && stepNum <= stepCount) {
           setCurrentStepId(stepNum);
         }
       }
       const savedCompleted = localStorage.getItem("jfaz_flow_completed");
       if (savedCompleted) {
-        setCompletedSteps(JSON.parse(savedCompleted));
+        const parsed = JSON.parse(savedCompleted);
+        if (Array.isArray(parsed)) {
+          setCompletedSteps(
+            parsed.filter((n): n is number => Number.isInteger(n) && n >= 1 && n <= stepCount)
+          );
+        }
       }
       const savedMode = localStorage.getItem("jfaz_flow_mode") as FlowMode;
       if (savedMode === "guided" || savedMode === "overview") {
@@ -191,87 +200,104 @@ export function useOnboardingFlow(isOnline: boolean = false) {
     } catch (e) {
       console.error("Could not restore onboarding state from localStorage", e);
     }
-  }, [activeSteps.length]);
+    setIsClient(true);
+  }, [stepCount]);
 
-  // Save changes to localStorage
-  const saveState = useCallback(
-    (step: number, completed: number[], mode: FlowMode) => {
-      try {
-        localStorage.setItem("jfaz_flow_step", step.toString());
-        localStorage.setItem("jfaz_flow_completed", JSON.stringify(completed));
-        localStorage.setItem("jfaz_flow_mode", mode);
-      } catch (e) {
-        console.error("Could not save onboarding state to localStorage", e);
-      }
-    },
-    []
-  );
+  // Persist after every change (only once the saved state has been restored)
+  useEffect(() => {
+    if (!isClient) return;
+    try {
+      localStorage.setItem("jfaz_flow_step", currentStepId.toString());
+      localStorage.setItem("jfaz_flow_completed", JSON.stringify(completedSteps));
+      localStorage.setItem("jfaz_flow_mode", flowMode);
+    } catch (e) {
+      console.error("Could not save onboarding state to localStorage", e);
+    }
+  }, [isClient, currentStepId, completedSteps, flowMode]);
 
   const scrollToStep = useCallback(
     (stepId: number) => {
       const step = activeSteps.find((s) => s.id === stepId);
       if (!step) return;
 
+      scrollLockUntil.current = Date.now() + SCROLL_LOCK_MS;
       setTimeout(() => {
-        const element = document.getElementById(step.targetId);
-        if (element) {
-          const yOffset = -90; // offset for sticky navbar + stepper
-          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-          window.scrollTo({ top: y, behavior: "smooth" });
-        }
+        // Offset for the sticky navbar + stepper comes from `scroll-padding-top` (see globals.css)
+        document.getElementById(step.targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 50);
     },
     [activeSteps]
   );
 
+  // Scroll-spy: keep the current step in sync with the section the user is reading
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      if (Date.now() < scrollLockUntil.current) return;
+      const offset =
+        parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      const triggerLine = offset + window.innerHeight * 0.25;
+      let active = activeSteps[0].id;
+      for (const step of activeSteps) {
+        const el = document.getElementById(step.targetId);
+        if (el && el.getBoundingClientRect().top <= triggerLine) {
+          active = step.id;
+        }
+      }
+      setCurrentStepId((prev) => (prev === active ? prev : active));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [activeSteps]);
+
   const goToStep = useCallback(
     (stepId: number, autoScroll: boolean = true) => {
-      if (stepId < 1 || stepId > activeSteps.length) return;
+      if (stepId < 1 || stepId > stepCount) return;
       setCurrentStepId(stepId);
-      saveState(stepId, completedSteps, flowMode);
       if (autoScroll) {
         scrollToStep(stepId);
       }
     },
-    [activeSteps.length, completedSteps, flowMode, saveState, scrollToStep]
+    [stepCount, scrollToStep]
   );
 
-  const markStepComplete = useCallback(
-    (stepId: number) => {
-      setCompletedSteps((prev) => {
-        if (!prev.includes(stepId)) {
-          const updated = [...prev, stepId];
-          saveState(currentStepId, updated, flowMode);
-          return updated;
-        }
-        return prev;
-      });
+  const markStepComplete = useCallback((stepId: number) => {
+    setCompletedSteps((prev) => (prev.includes(stepId) ? prev : [...prev, stepId]));
+  }, []);
+
+  // `fromStepId` lets each section's own footer advance from *its* step,
+  // independent of where the scroll-spy currently is.
+  const nextStep = useCallback(
+    (fromStepId?: number) => {
+      const from = fromStepId ?? currentStepId;
+      markStepComplete(from);
+      if (from < stepCount) {
+        goToStep(from + 1, true);
+      }
     },
-    [currentStepId, flowMode, saveState]
+    [stepCount, currentStepId, goToStep, markStepComplete]
   );
 
-  const nextStep = useCallback(() => {
-    markStepComplete(currentStepId);
-    if (currentStepId < activeSteps.length) {
-      const nextId = currentStepId + 1;
-      goToStep(nextId, true);
-    }
-  }, [activeSteps.length, currentStepId, goToStep, markStepComplete]);
-
-  const prevStep = useCallback(() => {
-    if (currentStepId > 1) {
-      const prevId = currentStepId - 1;
-      goToStep(prevId, true);
-    }
-  }, [currentStepId, goToStep]);
-
-  const switchMode = useCallback(
-    (newMode: FlowMode) => {
-      setFlowMode(newMode);
-      saveState(currentStepId, completedSteps, newMode);
+  const prevStep = useCallback(
+    (fromStepId?: number) => {
+      const from = fromStepId ?? currentStepId;
+      if (from > 1) {
+        goToStep(from - 1, true);
+      }
     },
-    [completedSteps, currentStepId, saveState]
+    [currentStepId, goToStep]
   );
+
+  const switchMode = useCallback((newMode: FlowMode) => {
+    setFlowMode(newMode);
+  }, []);
 
   const startGuidedTour = useCallback(() => {
     setFlowMode("guided");
@@ -281,14 +307,12 @@ export function useOnboardingFlow(isOnline: boolean = false) {
   const resetProgress = useCallback(() => {
     setCurrentStepId(1);
     setCompletedSteps([]);
-    saveState(1, [], flowMode);
-    scrollToStep(1);
-  }, [flowMode, saveState, scrollToStep]);
+  }, []);
 
   const currentStep =
     activeSteps.find((s) => s.id === currentStepId) || activeSteps[0];
   const progressPercentage = Math.round(
-    (completedSteps.length / activeSteps.length) * 100
+    (completedSteps.length / stepCount) * 100
   );
 
   return {

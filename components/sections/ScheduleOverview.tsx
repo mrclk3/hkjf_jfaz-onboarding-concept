@@ -9,46 +9,47 @@ interface ScheduleOverviewProps {
 }
 
 export function ScheduleOverview({ isOnline = false, scheduleNote }: ScheduleOverviewProps) {
+  // Times as published by the HLFS for Marburg-Cappel (Mon–Thu); the invitation takes precedence
   const physicalScheduleItems = [
     {
-      time: "07:00 – 08:00 Uhr",
-      title: "Gemeinsames Frühstück",
-      desc: "Großes Frühstücksbuffet in der Mensa. Pünktlich stärken vor Unterrichtsbeginn.",
+      time: "06:40 – 07:30 Uhr",
+      title: "Frühstück",
+      desc: "Im Speisesaal. Montags gibt es Frühstück von 09:00 – 09:30 Uhr.",
       icon: Coffee,
       color: "text-amber-600 bg-amber-50",
     },
     {
-      time: "08:15 – 12:00 Uhr",
-      title: "Unterrichtsblock 1 (Vormittag)",
-      desc: "Theorie, Gruppenarbeiten und Fallbeispiele in deinem Lehrsaal (inkl. Kaffeepause).",
+      time: "07:40 – 09:20 Uhr",
+      title: "Unterrichtsblock 1",
+      desc: "Danach Kaffeepause von 09:20 – 09:40 Uhr. Am Anreisetag stattdessen Anmeldung (08:30 – 09:15 Uhr).",
       icon: BookOpen,
       color: "text-hkjf-navy bg-blue-50",
     },
     {
-      time: "12:00 – 13:00 Uhr",
-      title: "Mittagspause & Warmes Essen",
-      desc: "Frisches 3-Gänge-Mittagessen mit Salatbar und Dessert in der JFAZ-Mensa.",
+      time: "09:40 – 12:15 Uhr",
+      title: "Unterrichtsblock 2",
+      desc: "Am Anreisetag beginnt hier dein Lehrgang.",
+      icon: BookOpen,
+      color: "text-hkjf-navy bg-blue-50",
+    },
+    {
+      time: "12:15 – 12:50 Uhr",
+      title: "Mittagessen",
+      desc: "Im Speisesaal. Vegetarische Kost oder andere Wünsche am Anmeldungstag melden.",
       icon: Utensils,
       color: "text-hkjf-red bg-red-50",
     },
     {
-      time: "13:00 – 17:30 Uhr",
-      title: "Unterrichtsblock 2 (Nachmittag)",
-      desc: "Praxisübungen, Workshops, Präsentationen oder Lehrproben.",
+      time: "13:10 – 15:55 Uhr",
+      title: "Unterrichtsblock 3",
+      desc: "Am Abreisetag endet der Unterricht spätestens um 14:30 Uhr.",
       icon: Sun,
       color: "text-orange-600 bg-orange-50",
     },
     {
-      time: "18:00 – 19:00 Uhr",
-      title: "Abendessen",
-      desc: "Klassische Abendbrot-Zeit in der Mensa mit warmen Extras.",
-      icon: Utensils,
-      color: "text-slate-700 bg-slate-100",
-    },
-    {
-      time: "ab 19:00 Uhr",
-      title: "Freizeit & Kameradschaft",
-      desc: "Gemütlicher Austausch im Bistro, Kickerturniere, Spaziergang oder Ausflug nach Marburg.",
+      time: "16:15 – 17:45 Uhr",
+      title: "Abendessen & Feierabend",
+      desc: "Freitags 17:00 – 17:45 Uhr. Danach hast du frei.",
       icon: Moon,
       color: "text-indigo-600 bg-indigo-50",
     },
@@ -65,7 +66,7 @@ export function ScheduleOverview({ isOnline = false, scheduleNote }: ScheduleOve
     {
       time: "Erster Block (ca. 90 Min.)",
       title: "Theorie & Fachinput",
-      desc: "Impulsvortrag der Dozenten, Präsentationen und Klärung von Grundlagen via Screensharing.",
+      desc: "Input der Lehrgangsleitung, Präsentationen und Klärung von Grundlagen per Bildschirmfreigabe.",
       icon: BookOpen,
       color: "text-hkjf-navy bg-blue-50",
     },
@@ -93,7 +94,7 @@ export function ScheduleOverview({ isOnline = false, scheduleNote }: ScheduleOve
     {
       time: "Abschlussblock",
       title: "Ergebnisse & Seminarabschluss",
-      desc: "Vorstellung der Gruppenarbeiten im Plenum, offene Fragerunde und Infos zum Zertifikaterhalt.",
+      desc: "Vorstellung der Gruppenarbeiten im Plenum, offene Fragerunde und Infos zur Teilnahmebescheinigung.",
       icon: Moon,
       color: "text-purple-600 bg-purple-50",
     },
@@ -102,7 +103,7 @@ export function ScheduleOverview({ isOnline = false, scheduleNote }: ScheduleOve
   const items = isOnline ? onlineScheduleItems : physicalScheduleItems;
 
   return (
-    <section id="ablauf" className="py-16 sm:py-20 bg-hkjf-cream border-b border-border/70 scroll-mt-20">
+    <section id="ablauf" className="py-16 sm:py-20 bg-hkjf-cream border-b border-border/70">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
@@ -134,7 +135,7 @@ export function ScheduleOverview({ isOnline = false, scheduleNote }: ScheduleOve
                 Typischer Lehrgangstag im JFAZ
               </h2>
               <p className="mt-3 text-sm sm:text-base text-slate-600">
-                Damit du dich sofort orientieren kannst: So sieht ein regulärer Seminartag aus.
+                So sieht ein regulärer Lehrgangstag in Marburg-Cappel laut HLFS aus. Wochenendlehrgänge und abweichende Zeiten stehen in deiner Einberufung.
               </p>
             </>
           )}
@@ -177,7 +178,7 @@ export function ScheduleOverview({ isOnline = false, scheduleNote }: ScheduleOve
             <p>
               {isOnline
                 ? "Regelmäßige Bildschirmpausen sind fest eingeplant, damit die Konzentration hoch bleibt. Nutze die Pausen, um kurz aufzustehen und den Blick in die Ferne schweifen zu lassen!"
-                : "Pünktlichkeit zu den Mahlzeiten und Unterrichtszeiten wird von allen sehr geschätzt. Die Lehrgangsleitung gibt dir am ersten Vormittag alle seminarbezogenen Feinheiten und eventuelle Raumwechsel bekannt!"}
+                : "Sei pünktlich zu den Mahlzeiten und Unterrichtsblöcken. Die Lehrgangsleitung erklärt dir zum Start Ablauf, Ziele und eventuelle Raumwechsel."}
             </p>
           </div>
         </div>

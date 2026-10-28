@@ -12,7 +12,7 @@ import { ScheduleOverview } from "@/components/sections/ScheduleOverview";
 import { PacklistInteractive } from "@/components/sections/PacklistInteractive";
 import { FaqAccordion } from "@/components/sections/FaqAccordion";
 import { StartklarQuiz } from "@/components/sections/StartklarQuiz";
-import { useOnboardingFlow } from "@/hooks/useOnboardingFlow";
+import { useOnboardingFlow, ONBOARDING_STEPS } from "@/hooks/useOnboardingFlow";
 import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 import { FloatingFlowBar } from "@/components/onboarding/FloatingFlowBar";
 import { StepFlowFooter } from "@/components/onboarding/StepFlowFooter";
@@ -51,21 +51,47 @@ export default function HomePage() {
     resetProgress,
   } = useOnboardingFlow(isOnline);
 
-  // Load saved course & check if initial modal needs to be shown
+  const isGuided = flowMode === "guided";
+
+  // Load saved course & check if initial modal needs to be shown.
+  // Deep links from the invitation mail (?kurs=<id>&schritt=<slug>) take precedence.
   useEffect(() => {
     try {
+      const params = new URLSearchParams(window.location.search);
+      const linkedCourseId = params.get("kurs");
+      const linkedStepSlug = params.get("schritt");
+      const linkedCourse = officialCourses.find((c) => c.id === linkedCourseId);
       const savedCourse = localStorage.getItem("jfaz_selected_course");
-      if (savedCourse) {
-        setSelectedCourseId(savedCourse);
+
+      if (linkedCourse) {
+        setSelectedCourseId(linkedCourse.id);
+        localStorage.setItem("jfaz_selected_course", linkedCourse.id);
+        localStorage.setItem("jfaz_modal_confirmed", "true");
+        if (savedCourse !== linkedCourse.id) {
+          // Different course than last visit: start the onboarding fresh
+          resetProgress();
+        }
+        markStepComplete(1);
+      } else {
+        if (savedCourse && officialCourses.some((c) => c.id === savedCourse)) {
+          setSelectedCourseId(savedCourse);
+        }
+        if (!localStorage.getItem("jfaz_modal_confirmed")) {
+          // Show modal on first arrival
+          setIsCourseModalOpen(true);
+        }
       }
-      const hasConfirmedCourse = localStorage.getItem("jfaz_modal_confirmed");
-      if (!hasConfirmedCourse) {
-        // Show modal on first arrival
-        setIsCourseModalOpen(true);
+
+      const linkedStep = ONBOARDING_STEPS.find((s) => s.slug === linkedStepSlug);
+      if (linkedStep) {
+        // Wait one frame so the course-specific sections are rendered before scrolling
+        requestAnimationFrame(() => goToStep(linkedStep.id, true));
       }
     } catch (e) {
       console.error("Could not load initial modal state from localStorage", e);
     }
+    // Runs once on arrival; the flow callbacks are stable enough for this one-shot read
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSelectCourse = (courseId: string) => {
@@ -75,6 +101,11 @@ export default function HomePage() {
     } catch (e) {
       console.error("Could not save course selection to localStorage", e);
     }
+    // Keep the address bar shareable: it always reflects the chosen course
+    const url = new URL(window.location.href);
+    url.searchParams.set("kurs", courseId);
+    url.searchParams.delete("schritt");
+    window.history.replaceState(null, "", url);
   };
 
   const handleConfirmModalCourse = (courseId: string) => {
@@ -98,7 +129,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex flex-col w-full relative pb-20">
+    <div className={`flex flex-col w-full relative ${isGuided ? "pb-24" : ""}`}>
       {/* 1. Hero & Persona Switcher */}
       <div className="print:hidden">
         <Hero
@@ -111,40 +142,40 @@ export default function HomePage() {
       </div>
 
       {/* 2. Sticky Onboarding Stepper Bar & Progress Tracker */}
-      <div className="print:hidden">
-        <OnboardingStepper
-          steps={steps}
-          currentStepId={currentStepId}
-          completedSteps={completedSteps}
-          progressPercentage={progressPercentage}
-          flowMode={flowMode}
-          onSelectStep={(id) => goToStep(id, true)}
-          onSwitchMode={switchMode}
-          onResetProgress={resetProgress}
-          onOpenCourseModal={() => setIsCourseModalOpen(true)}
-        />
-      </div>
+      <OnboardingStepper
+        steps={steps}
+        currentStepId={currentStepId}
+        completedSteps={completedSteps}
+        progressPercentage={progressPercentage}
+        flowMode={flowMode}
+        onSelectStep={(id) => goToStep(id, true)}
+        onSwitchMode={switchMode}
+        onResetProgress={resetProgress}
+        onOpenCourseModal={() => setIsCourseModalOpen(true)}
+      />
 
       {/* STEP 1: Lehrgang & Dresscode */}
-      <div id="step-lehrgang" className="print:hidden scroll-mt-32">
+      <div id="step-lehrgang" className="print:hidden">
         <div className="relative">
           <CourseSelectorSection
             selectedCourseId={selectedCourseId}
             onSelectCourse={handleSelectCourse}
           />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 -mt-6">
-            <StepFlowFooter
-              currentStep={steps[0]}
-              nextStep={steps[1]}
-              isCompleted={completedSteps.includes(1)}
-              onNext={nextStep}
-            />
+            {isGuided && (
+              <StepFlowFooter
+                currentStep={steps[0]}
+                nextStep={steps[1]}
+                isCompleted={completedSteps.includes(1)}
+                onNext={() => nextStep(1)}
+              />
+            )}
           </div>
         </div>
       </div>
 
       {/* STEP 2: Anreise & Check-in / Virtueller Check-in */}
-      <div id="step-anreise" className="print:hidden scroll-mt-32">
+      <div id="step-anreise" className="print:hidden">
         <div className="relative">
           <ArrivalGuide
             isOnline={isOnline}
@@ -152,20 +183,22 @@ export default function HomePage() {
             platform={activeCourse.platform}
           />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 -mt-6">
-            <StepFlowFooter
-              currentStep={steps[1]}
-              nextStep={steps[2]}
-              prevStep={steps[0]}
-              isCompleted={completedSteps.includes(2)}
-              onNext={nextStep}
-              onPrev={prevStep}
-            />
+            {isGuided && (
+              <StepFlowFooter
+                currentStep={steps[1]}
+                nextStep={steps[2]}
+                prevStep={steps[0]}
+                isCompleted={completedSteps.includes(2)}
+                onNext={() => nextStep(2)}
+                onPrev={() => prevStep(2)}
+              />
+            )}
           </div>
         </div>
       </div>
 
       {/* STEP 3: Campus & Zimmer / Digitaler Seminarraum */}
-      <div id="step-campus" className="print:hidden scroll-mt-32">
+      <div id="step-campus" className="print:hidden">
         <div className="relative">
           {isOnline ? (
             <>
@@ -210,96 +243,106 @@ export default function HomePage() {
           )}
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 -mt-6">
-            <StepFlowFooter
-              currentStep={steps[2]}
-              nextStep={steps[3]}
-              prevStep={steps[1]}
-              isCompleted={completedSteps.includes(3)}
-              onNext={nextStep}
-              onPrev={prevStep}
-            />
+            {isGuided && (
+              <StepFlowFooter
+                currentStep={steps[2]}
+                nextStep={steps[3]}
+                prevStep={steps[1]}
+                isCompleted={completedSteps.includes(3)}
+                onNext={() => nextStep(3)}
+                onPrev={() => prevStep(3)}
+              />
+            )}
           </div>
         </div>
       </div>
 
       {/* STEP 4: Tagesablauf & Essenszeiten / Online-Ablauf */}
-      <div id="step-ablauf" className="print:hidden scroll-mt-32">
+      <div id="step-ablauf" className="print:hidden">
         <div className="relative">
           <ScheduleOverview
             isOnline={isOnline}
             scheduleNote={activeCourse.onlineScheduleNote}
           />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 -mt-6">
-            <StepFlowFooter
-              currentStep={steps[3]}
-              nextStep={steps[4]}
-              prevStep={steps[2]}
-              isCompleted={completedSteps.includes(4)}
-              onNext={nextStep}
-              onPrev={prevStep}
-            />
+            {isGuided && (
+              <StepFlowFooter
+                currentStep={steps[3]}
+                nextStep={steps[4]}
+                prevStep={steps[2]}
+                isCompleted={completedSteps.includes(4)}
+                onNext={() => nextStep(4)}
+                onPrev={() => prevStep(4)}
+              />
+            )}
           </div>
         </div>
       </div>
 
       {/* STEP 5: Interaktive Packliste / Schreibtisch-Checkliste */}
-      <div id="step-packliste" className="scroll-mt-32">
+      <div id="step-packliste">
         <div className="relative">
           <PacklistInteractive
             selectedCourseId={selectedCourseId}
             onSelectCourse={handleSelectCourse}
           />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 -mt-6 print:hidden">
-            <StepFlowFooter
-              currentStep={steps[4]}
-              nextStep={steps[5]}
-              prevStep={steps[3]}
-              isCompleted={completedSteps.includes(5)}
-              onNext={nextStep}
-              onPrev={prevStep}
-            />
+            {isGuided && (
+              <StepFlowFooter
+                currentStep={steps[4]}
+                nextStep={steps[5]}
+                prevStep={steps[3]}
+                isCompleted={completedSteps.includes(5)}
+                onNext={() => nextStep(5)}
+                onPrev={() => prevStep(5)}
+              />
+            )}
           </div>
         </div>
       </div>
 
       {/* STEP 6: Cappel-Guide & FAQ / Online-Support & FAQ */}
-      <div id="step-umgebung" className="print:hidden scroll-mt-32">
+      <div id="step-umgebung" className="print:hidden">
         <div className="relative">
           <CappelGuide isOnline={isOnline} />
           <FaqAccordion isOnline={isOnline} />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 -mt-6">
-            <StepFlowFooter
-              currentStep={steps[5]}
-              nextStep={steps[6]}
-              prevStep={steps[4]}
-              isCompleted={completedSteps.includes(6)}
-              onNext={nextStep}
-              onPrev={prevStep}
-            />
+            {isGuided && (
+              <StepFlowFooter
+                currentStep={steps[5]}
+                nextStep={steps[6]}
+                prevStep={steps[4]}
+                isCompleted={completedSteps.includes(6)}
+                onNext={() => nextStep(6)}
+                onPrev={() => prevStep(6)}
+              />
+            )}
           </div>
         </div>
       </div>
 
-      {/* STEP 7: Startklar-Quiz & Zertifikat */}
-      <div id="step-quiz" className="print:hidden scroll-mt-32">
+      {/* STEP 7: Startklar-Quiz */}
+      <div id="step-quiz" className="print:hidden">
         <div className="relative">
           <StartklarQuiz isOnline={isOnline} courseTitle={activeCourse.title} />
         </div>
       </div>
 
       {/* Floating Sticky Bottom Flow Bar */}
+      {isGuided && (
       <div className="print:hidden">
         <FloatingFlowBar
           steps={steps}
           currentStepId={currentStepId}
           completedSteps={completedSteps}
           progressPercentage={progressPercentage}
-          onNext={nextStep}
-          onPrev={prevStep}
+          onNext={() => nextStep()}
+          onPrev={() => prevStep()}
           onGoToStep={(id) => goToStep(id, true)}
           onCompleteTour={handleCompleteTour}
         />
       </div>
+      )}
 
       {/* Initial / On-Demand Course Selection Modal */}
       <CourseSelectionModal
